@@ -19,6 +19,10 @@
 ## Without Docker
 
 ### Backend
+- Go to backend folder
+```bash
+  cd api
+```
 - Install ruby 3.2.2, depends on your OS:
     - [Install Ruby on Ubuntu](https://linuxize.com/post/how-to-install-ruby-on-ubuntu-20-04/)
     - [Install Ruby on Windows](https://rubyinstaller.org/)
