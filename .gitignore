@@ -1,18 +1,18 @@
 *.gem
 *.rbc
 /.config
-/coverage/
-/InstalledFiles
-/pkg/
-/spec/reports/
-/spec/examples.txt
-/test/tmp/
-/test/version_tmp/
-/tmp/
-.idea
-/api/tmp
-/api/log
+/api/coverage/
+/api/InstalledFiles
+/api/pkg/
+/api/spec/reports/
+/api/spec/examples.txt
+/api/test/version_tmp/
+/api/tmp/
+/api/test/tmp/
+/api/log/
+/api/storage/
 
+.idea
 # Used by dotenv library to load environment variables.
 # .env
 
