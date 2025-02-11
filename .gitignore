@@ -1,5 +1,6 @@
 *.gem
 *.rbc
+*.log
 /.config
 /api/coverage/
 /api/InstalledFiles
@@ -9,8 +10,8 @@
 /api/test/version_tmp/
 /api/tmp/
 /api/test/tmp/
-/api/log/
-/api/storage/
+/api/log/*
+/api/storage/*
 
 .idea
 # Used by dotenv library to load environment variables.
