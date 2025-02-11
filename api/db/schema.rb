@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_02_11_003742) do
+ActiveRecord::Schema[7.1].define(version: 2025_02_11_043154) do
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
@@ -19,4 +19,13 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_003742) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "videos", force: :cascade do |t|
+    t.integer "owner_id"
+    t.string "url"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_videos_on_owner_id"
+  end
+
+  add_foreign_key "videos", "users", column: "owner_id"
 end
