@@ -1,11 +1,16 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "../styles/header.module.css";
 import { useRouter } from "next/navigation";
 
 const Header: React.FC = () => {
-    const [email, setEmail] = useState(localStorage.getItem("user") || null);
+    const [email, setEmail] = useState<string | null>(null);
     const router = useRouter();
+
+    useEffect(() => {
+        const user = localStorage.getItem("user");
+        setEmail(user ? JSON.parse(user).user.email : null);
+    }, [email]);
 
     function handleLogout(
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
@@ -24,7 +29,7 @@ const Header: React.FC = () => {
 
     return (
         <header className={styles.header}>
-            <div className={styles.logo}>
+            <div className={styles.logo} onClick={() => router.push("/")}>
                 <span role="img" aria-label="home">
                     🏠
                 </span>{" "}

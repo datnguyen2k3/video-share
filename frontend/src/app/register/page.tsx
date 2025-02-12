@@ -2,16 +2,40 @@
 import React, { useState } from "react";
 import styles from "../../styles/authen.module.css";
 import Header from "@/components/Headers";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 
 const Register: React.FC = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const router = useRouter();
+
+    const validatePassword = (password: string) => {
+        const regex =
+            /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+        return regex.test(password);
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        alert(`Registered with Name: ${name}, Email: ${email}`);
-        //Call api, store user in local storage
+        if (!validatePassword(password)) {
+            //Todo: Add a reusable alert component
+            return;
+        }
+        axios
+            .post(process.env.NEXT_PUBLIC_REGISTER_API || "", {
+                name,
+                email,
+                password,
+            })
+            .then((res) => {
+                localStorage.setItem("user", JSON.stringify(res.data));
+                router.push("/");
+            })
+            .catch((err) => {
+                console.log(err);
+            });
     };
 
     return (

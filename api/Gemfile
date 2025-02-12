@@ -69,4 +69,6 @@ end
 gem 'bcrypt' # for password hashing
 gem 'jwt'    # for JSON Web Token authentication
 gem 'active_model_serializers', '~> 0.10.0'
+gem 'rack-cors'
+
 

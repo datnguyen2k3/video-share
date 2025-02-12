@@ -48,3 +48,8 @@
 .button:hover {
     background-color: #f0f0f0;
 }
+
+.registerLink {
+    font-size: 14px;
+    margin-top: 10px;
+}
