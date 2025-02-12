@@ -21,7 +21,7 @@ ActiveRecord::Schema[7.1].define(version: 2025_02_11_043154) do
 
   create_table "videos", force: :cascade do |t|
     t.integer "owner_id"
-    t.string "url"
+    t.string "youtube_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_videos_on_owner_id"

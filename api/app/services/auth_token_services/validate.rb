@@ -1,3 +1,5 @@
+require_relative 'concern/helper'
+
 module AuthTokenServices
   class Validate
     include Concern::Helper
@@ -10,7 +12,7 @@ module AuthTokenServices
 
     def call
       payload = JWT.decode(token, SECRET_KEY)[0]
-      user_id = payload[:user_id]
+      user_id = payload['user_id']
 
       user = ::User.find(user_id)
       unless user
@@ -19,9 +21,9 @@ module AuthTokenServices
 
       user
     rescue JWT::ExpiredSignature => e
-      raise Exceptions::ExpiredTokenError
+      raise ExpiredTokenError
     rescue JWT::DecodeError => e
-      raise Exceptions::InvalidTokenError
+      raise InvalidTokenError
     end
   end
 end

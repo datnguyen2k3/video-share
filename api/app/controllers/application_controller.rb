@@ -1,3 +1,5 @@
+require_relative '../services/auth_token_services/validate'
+
 class ApplicationController < ActionController::Base
   before_action :authorize_request
 
