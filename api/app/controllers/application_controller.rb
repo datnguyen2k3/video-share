@@ -8,7 +8,5 @@ class ApplicationController < ActionController::Base
     header = header.split(' ').last if header
     decoded = Auth::JsonWebToken.decode(header)
     @current_user = User.find(decoded[:user_id]) if decoded
-  rescue ActiveRecord::RecordNotFound, JWT::DecodeError
-    render json: { error: 'Unauthorized' }, status: :unauthorized
   end
 end
