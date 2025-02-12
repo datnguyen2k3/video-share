@@ -1,8 +1,5 @@
-module Exceptions
-
-  class InvalidEmailError < ApiError
-    def initialize(details = {})
-      super(:bad_request, "Invalid email", details)
-    end
+class InvalidEmailError < ApiError
+  def initialize(details = {})
+    super(400, "Invalid email", details)
   end
 end

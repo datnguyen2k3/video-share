@@ -1,7 +1,5 @@
-module Exceptions
-  class InvalidPasswordError < ApiError
-    def initialize(details = {})
-      super(:bad_request, "Invalid password", details)
-    end
+class InvalidPasswordError < ApiError
+  def initialize(details = {})
+    super(400, "Invalid password", details)
   end
 end
