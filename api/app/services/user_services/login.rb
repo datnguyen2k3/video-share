@@ -19,7 +19,7 @@ module UserServices
     def validate_existed_user
       existed_user = ::User.find_by(email: params[:email])
       if existed_user.nil?
-        raise ::NotFound::UserError
+        raise NotFoundUserError
       end
 
       @user = existed_user
