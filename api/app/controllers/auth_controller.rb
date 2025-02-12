@@ -1,39 +1,33 @@
+require_relative '../services/auth_token_services/create'
+require_relative '../services/user_services/create'
+require_relative '../services/user_services/login'
+
 class AuthController < ApplicationController
-  skip_before_action :verify_authenticity_token
+  skip_before_action :verify_authenticity_token, :authorize_request
 
   def register
-    user = User.new(user_params)
-    if user.save
-      token = Auth::JsonWebToken.encode({ user_id: user.id })
-      render json: {
-        auth: token_response(token),
-        user: UserSerializer.new(user).serializable_hash
-      }, status: :created
-    else
-      render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
-    end
+    user = ::UserServices::Create.new(create_user_params).call
+    token = ::AuthTokenServices::Create.new(user.id).call
+    user_response = UserSerializer.new(user).serializable_hash
+
+    render json: {
+      user: user_response,
+      auth: token,
+    }, status: :created
   end
 
   def login
-    user = User.find_by(email: params[:email])
-    if user&.authenticate(params[:password])
-      token = Auth::JsonWebToken.encode({ user_id: user.id })
-      render json: { auth: token_response(token) }, status: :ok
-    else
-      render json: { error: 'Invalid email or password' }, status: :unauthorized
-    end
+    token = ::UserServices::Login.new(login_params).call
+    render json: { auth: token }, status: :ok
   end
 
   private
 
-  def user_params
+  def create_user_params
     params.permit(:name, :email, :password)
   end
 
-  def token_response(token)
-    {
-      access_token: token,
-      expires_in: Auth::JsonWebToken.expires_in
-    }
+  def login_params
+    params.permit(:email, :password)
   end
 end
