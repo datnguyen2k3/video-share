@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   post 'auth/user', to: 'auth#register'
   post 'auth/token', to: 'auth#login'
   post 'video', to: 'video#create'
+  get 'video', to: 'video#get'
 
   # Defines the root path route ("/")
   # root "posts#index"
