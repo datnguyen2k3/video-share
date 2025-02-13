@@ -18,6 +18,10 @@
 
 ## Without Docker
 
+- Install Redis
+
+- Install go
+
 ### Backend
 - Go to backend folder
 ```bash
@@ -44,6 +48,7 @@
   rails db:create
   rails db:migrate
 ```
+- Replace variable in file .env
 - Start the server
 ```bash
   rails s
