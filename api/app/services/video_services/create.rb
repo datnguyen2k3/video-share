@@ -16,6 +16,7 @@ module VideoServices
 
       video = ::Video.new(owner_id: owner_id, youtube_id: youtube_id)
       video.save!
+      SendNotificationJob.perform_async(video.id, owner_id, youtube_id)
       video
     end
 

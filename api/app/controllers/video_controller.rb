@@ -13,7 +13,13 @@ class VideoController < ApplicationController
 
   def get
     data = ::VideoServices::GetByCursor.new(params[:cursor]).call
-    render json: data, status: :ok
+    response_videos = data[:videos].map do |video|
+      VideoSerializer.new(video).serializable_hash
+    end
+    render json: {
+      videos: response_videos,
+      next_cursor: data[:next_cursor]
+    }, status: :ok
   end
 
   private

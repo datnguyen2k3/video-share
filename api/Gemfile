@@ -66,9 +66,12 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem 'bcrypt' # for password hashing
-gem 'jwt'    # for JSON Web Token authentication
+gem 'bcrypt', '~> 3.1.20'
+gem 'jwt', '2.10.1'
 gem 'active_model_serializers', '~> 0.10.0'
-gem 'rack-cors'
-
-
+gem 'rack-cors', '~> 2.0.2'
+gem 'anycable-rails', '~> 1.5.6'
+gem 'sidekiq', '~> 7.3.8'
+gem 'redis', '~> 5.3.0'
+# Gemfile
+gem 'dotenv-rails', '~> 3.1.7', groups: [:development, :test]

@@ -2,6 +2,8 @@ require_relative "boot"
 
 require "rails/all"
 require_relative "../app/middlewares/api_exception_handler_middleware"
+require_relative "../app/channels/application_cable/connection"
+require_relative '../app/channels/application_cable/notification_channel'
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -26,5 +28,7 @@ module Api
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
     config.middleware.use ::ApiExceptionHandlerMiddleware
+    config.active_job.queue_adapter = :sidekiq
+
   end
 end

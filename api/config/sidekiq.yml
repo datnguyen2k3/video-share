@@ -1,0 +1,7 @@
+:queues:
+  - default
+  - notifications
+
+:concurrency: 5
+:redis:
+  url: <%= ENV['REDIS_URL'] %>

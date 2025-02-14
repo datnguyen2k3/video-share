@@ -8,6 +8,7 @@ class ApplicationController < ActionController::Base
   private
 
   def authorize_request
+    ApplicationCable::Connection
     header = request.headers['Authorization']
     header = header.split(' ').last if header
     @current_user = ::AuthTokenServices::Validate.new(header).call
