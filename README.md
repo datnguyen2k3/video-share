@@ -20,8 +20,6 @@
 
 - Install Redis
 
-- Install go
-
 ### Backend
 - Go to backend folder
 ```bash
@@ -45,13 +43,30 @@
 ```
 - Create database
 ```bash
-  rails db:create
-  rails db:migrate
+  bundle exec rails db:create
+  bundle exec rails db:migrate
 ```
 - Replace variable in file .env
-- Start the server
+
+- Start the API server
 ```bash
-  rails s
+  bundle exec rails s
 ```
 
-- If command `rails` is not working, try add `bundle exec` before the command, e.g. `bundle exec rails s`
+- Start the sidekiq worker (background jobs)
+```bash
+  bundle exec sidekiq
+```
+
+- Start anycable RPC server (server interact with websocket server)
+```bash
+  bundle exec anycable
+```
+
+- Start the websocket server
+- Replace anycable-go-linx with anycable-go depending on your OS by download in here: https://github.com/anycable/anycable-go/releases/tag/v1.5.6
+```bash
+  ./anycable-go-linx 
+```
+
+- If commands are not working, try to add sudo if you get permission denied of these commands
