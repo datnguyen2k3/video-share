@@ -3,9 +3,13 @@ export type User = {
     email: string;
 };
 
-export type Video = {
+export type VideoType = {
+    id: string;
     url: string;
-    thumbnail: string;
     title: string;
+    sharedBy: string;
+    likes: number;
+    dislikes: number;
     description: string;
+    youtube_id: string;
 };

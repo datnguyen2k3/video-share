@@ -43,4 +43,8 @@
     font-size: 14px;
     margin-top: 10px;
     color: #333;
+    width: 200px; /* Adjust width as needed */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }

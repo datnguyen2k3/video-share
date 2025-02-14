@@ -8,16 +8,17 @@ const Header: React.FC = () => {
     const router = useRouter();
 
     useEffect(() => {
-        const user = localStorage.getItem("user");
-        setEmail(user ? JSON.parse(user).user.email : null);
+        const userData = localStorage.getItem("userData");
+        setEmail(userData ? JSON.parse(userData).email : null);
     }, [email]);
 
     function handleLogout(
         event: React.MouseEvent<HTMLButtonElement, MouseEvent>
     ): void {
         event.preventDefault();
-        localStorage.removeItem("user");
+        localStorage.removeItem("userData");
         setEmail("");
+        router.push("/login");
     }
 
     function handleShareMovie(
