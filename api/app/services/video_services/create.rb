@@ -3,11 +3,12 @@ require 'uri'
 module VideoServices
   class Create
 
-    attr_reader :owner_id, :url
+    attr_reader :owner_id, :url, :owner
 
-    def initialize(param)
-      @url = param[:url]
-      @owner_id = param[:owner_id]
+    def initialize(video_param, owner)
+      @url = video_param[:url]
+      @owner_id = video_param[:owner_id]
+      @owner = owner
     end
 
     def call
@@ -16,7 +17,7 @@ module VideoServices
 
       video = ::Video.new(owner_id: owner_id, youtube_id: youtube_id)
       video.save!
-      SendNotificationJob.perform_async(video.id, owner_id, youtube_id)
+      SendNotificationJob.perform_async(video.id, owner_id, youtube_id, owner.email, owner.name)
       video
     end
 
