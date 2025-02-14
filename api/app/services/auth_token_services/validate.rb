@@ -11,9 +11,9 @@ module AuthTokenServices
       payload = JWT.decode(token, ENV['SECRET_KEY'])[0]
       user_id = payload['user_id']
 
-      user = ::User.find(user_id)
+      user = ::User.find_by(id: user_id)
       unless user
-        raise Exceptions::InvalidTokenError
+        raise InvalidTokenError
       end
 
       user
