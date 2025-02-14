@@ -135,6 +135,11 @@ GEM
       railties (>= 6.1)
     drb (2.2.1)
     erubi (1.13.1)
+    factory_bot (6.5.1)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.4.4)
+      factory_bot (~> 6.5)
+      railties (>= 5.0.0)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-protobuf (4.29.3-arm64-darwin)
@@ -205,6 +210,8 @@ GEM
       racc (~> 1.4)
     nokogiri (1.18.2-x86_64-linux-gnu)
       racc (~> 1.4)
+    pg (1.5.6)
+    pg (1.5.6-x64-mingw-ucrt)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -346,9 +353,11 @@ DEPENDENCIES
   capybara
   debug
   dotenv-rails (~> 3.1.7)
+  factory_bot_rails
   importmap-rails
   jbuilder
   jwt (= 2.10.1)
+  pg (~> 1.5.6)
   puma (>= 5.0)
   rack-cors (~> 2.0.2)
   rails (~> 7.1.5, >= 7.1.5.1)
