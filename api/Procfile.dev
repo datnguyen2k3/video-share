@@ -3,4 +3,4 @@ web:
 anycable:
     bundle exec anycable
 ws:
-    ./anycable-go-linux --redis_url="redis://default:ipFx6sxvozj2RbOETQO79aXHipQ9mWyZ@redis-18042.crce178.ap-east-1-1.ec2.redns.redis-cloud.com:18042" --redis_channel="__anycable__" --debug --broadcast_adapter=redisx
+    ./anycable-go-window --redis_url="redis://default:ipFx6sxvozj2RbOETQO79aXHipQ9mWyZ@redis-18042.crce178.ap-east-1-1.ec2.redns.redis-cloud.com:18042" --redis_channel="__anycable__" --debug --broadcast_adapter=redisx

@@ -1,8 +1,5 @@
-require_relative 'concern/helper'
-
 module AuthTokenServices
   class Create
-    include Concern::Helper
     attr_reader :user_id, :data
 
     def initialize(user_id)
@@ -17,7 +14,7 @@ module AuthTokenServices
         exp: expires_in,
       }
 
-      access_token = JWT.encode(payload, SECRET_KEY)
+      access_token = JWT.encode(payload, ENV['SECRET_KEY'])
 
       @data = {
         access_token: access_token,
