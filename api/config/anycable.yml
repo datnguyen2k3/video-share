@@ -25,10 +25,12 @@ default: &default
   # Must be the same as in your AnyCable server config
   secret: "anycable-local-secret"
   websocket_url: <%= ENV['WEBSOCKET_URL'] %>
-  rpc_host: "127.0.0.1:50051"
+  rpc_host: <%= ENV['WEBSOCKET_RPC_URL'] %>
 
 development:
   <<: *default
+  embedded: true
+
 
 test:
   <<: *default

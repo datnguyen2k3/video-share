@@ -5,9 +5,7 @@ module ApplicationCable
     identified_by :current_user
 
     def connect
-      # self.current_user = find_verified_user
-      puts "TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT"
-      reject_unauthorized_connection
+      self.current_user = find_verified_user
     end
 
     private

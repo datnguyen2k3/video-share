@@ -1,5 +1,8 @@
 development:
   adapter: any_cable
 
+test:
+  adapter: anycable
+
 production:
   adapter: any_cable
