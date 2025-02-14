@@ -29,8 +29,6 @@ default: &default
 
 development:
   <<: *default
-  embedded: true
-
 
 test:
   <<: *default
