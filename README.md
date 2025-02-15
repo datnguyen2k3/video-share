@@ -1,22 +1,33 @@
-# Video share
+# Introduction
 
-- This is a simple Youtube video sharing app built with Ruby on Rails and React.
+- Video Share a simple Youtube video sharing app built with Ruby on Rails and React.
 - Functions:
   - User can sign up and log in.
   - User can share a Youtube video by pasting the video URL.
   - User can view the video shared by other users.
 
+# Prerequisites
+  - Frontend: Node v22
+  - Backend: Ruby v3.2.2
+  - Database: Redis v7, Postgres v17
+
 # Installation
 
 - Clone the repository
 ```bash
-  git clone 
+  git clone https://github.com/datnguyen2k3/video-share.git
   cd video-share
 ```
 
 ## With Docker
 
 ## Without Docker
+
+### Frontend
+- Go to frontend folder
+```bash
+  cd frontend
+```
 
 ### Backend
 - Go to backend folder
@@ -146,7 +157,7 @@ Check if Ruby is installed, it should return version 3.2.2
 
 - For linux
 ```bash
-  ./anycable-go-winlinux
+  ./anycable-go-linux
 ```
 
 - For mac
@@ -155,5 +166,19 @@ Check if Ruby is installed, it should return version 3.2.2
   anycable-go
 ```
 
-#### Possible errors 
+#### Running test
+- Setup test database
+```bash
+  bundle exec rails db:create RAILS_ENV=test
+  bundle exec rails db:migrate RAILS_ENV=test
+```
+
+- Run test
+```bash
+  bundle exec rspec
+```
+
+# Usage
+
+# Troubleshooting
 - If those commands are not working, try to add `sudo` if you get permission denied of these commands
