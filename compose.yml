@@ -75,3 +75,10 @@ services:
                 condition: service_healthy
             redis:
                 condition: service_started
+    frontend:
+        build: ./frontend
+        ports:
+            - "3001:3001"
+        environment:
+            NODE_ENV: production
+        env_file: "./frontend/.env.docker"
