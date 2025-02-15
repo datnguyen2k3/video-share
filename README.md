@@ -5,6 +5,7 @@
   - User can sign up and log in.
   - User can share a Youtube video by pasting the video URL.
   - User can view the video shared by other users.
+  - User can receive notifications real-time when others share a video
 
 # Prerequisites
   - Frontend: Node v22
