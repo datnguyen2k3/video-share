@@ -3,10 +3,7 @@ set -e
 
 # Wait for database to be available
 
-if [ "$RUN_MIGRATIONS" = "true" ]; then
-  echo "Database is up, running migrations..."
-  bundle exec rails db:create || true
-  bundle exec rails db:migrate
-fi
+echo "Database is up, running migrations..."
+bundle exec rails db:prepare
 
 exec "$@"

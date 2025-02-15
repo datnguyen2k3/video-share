@@ -78,7 +78,7 @@ COPY --chown=ruby:ruby . .
 
 RUN chmod +x /app/bin/docker-entrypoint
 
-ENTRYPOINT ["/app/bin/docker-entrypoint"]
+#ENTRYPOINT ["/app/bin/docker-entrypoint"]
 
 EXPOSE 3000
 

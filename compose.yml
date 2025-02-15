@@ -32,6 +32,7 @@ services:
 
     server:
         build: ./api
+        entrypoint: ["/app/bin/docker-entrypoint"]
         command: ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
         ports:
             - "3000:3000"
@@ -39,7 +40,6 @@ services:
         environment:
             POSTGRES_HOST: db
             REDIS_URL: redis://redis:6379
-            RUN_MIGRATIONS: true
         depends_on:
             db:
                 condition: service_healthy
@@ -53,7 +53,6 @@ services:
         environment:
             POSTGRES_HOST: db
             REDIS_URL: redis://redis:6379
-            RUN_MIGRATIONS: false
         depends_on:
             db:
                 condition: service_healthy
@@ -67,7 +66,6 @@ services:
         environment:
             POSTGRES_HOST: db
             REDIS_URL: redis://redis:6379
-            RUN_MIGRATIONS: false
             ANYCABLE_REDIS_URL: "redis://redis:6379"
             ANYCABLE_RPC_HOST: "anycable:50051"
         depends_on:
