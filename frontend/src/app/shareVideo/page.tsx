@@ -5,9 +5,11 @@ import Headers from "../../components/Headers";
 import axios from "axios";
 import { getAuthorization } from "../../../utils/auth";
 import useAuth from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
 
 const YoutubeShareForm: React.FC = () => {
   const [url, setUrl] = useState<string>("");
+  const router = useRouter();
   useAuth();
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -21,6 +23,7 @@ const YoutubeShareForm: React.FC = () => {
         },
       },
     );
+    router.push("/");
   };
 
   return (

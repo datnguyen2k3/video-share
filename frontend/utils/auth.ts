@@ -17,7 +17,6 @@ export const authSuccessfully = (
     ...res.data,
     email: email,
   };
-  console.log({ userData });
   localStorage.setItem("userData", JSON.stringify(userData));
   router.push("/");
 };

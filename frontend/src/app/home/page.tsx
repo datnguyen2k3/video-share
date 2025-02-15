@@ -7,9 +7,17 @@ import Video from "@/components/Video";
 import { VideoType } from "@/types/modals";
 import { getAuthorization } from "../../../utils/auth";
 import useAuth from "@/hooks/useAuth";
+import Toast from "@/components/Toast";
+import { useWebSocket } from "@/contexts/WebSocketContext";
 
 const VideoList: React.FC = () => {
   const [videos, setVideos] = useState([]);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success" as "success" | "error",
+  });
+  const { connected } = useWebSocket();
   useAuth();
   useEffect(() => {
     if (!localStorage.getItem("userData")) {
@@ -23,15 +31,32 @@ const VideoList: React.FC = () => {
       })
       .then((res) => {
         setVideos(res.data.videos);
+      })
+      .catch((err) => {
+        let additionalMessage = "";
+        if (err.response.status == "401") {
+          additionalMessage = "Please log out and log in again.";
+        }
+        setToast({
+          show: true,
+          message: `${err.response.data.error}. ${additionalMessage}`,
+          type: "error",
+        });
       });
   }, []);
 
   return (
     <>
       <Header />
+      <Toast
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
       <div className={styles.container}>
         {videos.map((video: VideoType) => (
-          <Video key={video.youtube_id} videoId={video.youtube_id} />
+          <Video key={video.youtube_id} videoDetail={video} />
         ))}
       </div>
     </>

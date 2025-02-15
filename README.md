@@ -10,7 +10,7 @@
 
 - Clone the repository
 ```bash
-  git clone 
+  git clone
   cd video-share
 ```
 
@@ -41,6 +41,13 @@
 ```bash
   bundle install
 ```
+- For macos specific user, do these additional steps:
+For macOS using Homebrew:
+```bash
+  brew install libpq
+  bundle config --local build.pg --with-opt-dir="$(brew --prefix libpq)"
+```
+
 - Create database
 ```bash
   bundle exec rails db:create
@@ -66,7 +73,7 @@
 - Start the websocket server
 - Replace anycable-go-linx with anycable-go depending on your OS by download in here: https://github.com/anycable/anycable-go/releases/tag/v1.5.6
 ```bash
-  ./anycable-go-linx 
+  ./anycable-go-linx
 ```
 
 - If commands are not working, try to add sudo if you get permission denied of these commands
