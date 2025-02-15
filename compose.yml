@@ -1,6 +1,6 @@
 services:
     db:
-        image: postgres
+        image: postgres:17.3
         ports:
             - "5432:5432"
         environment:
@@ -12,21 +12,22 @@ services:
             retries: 5
 
     redis:
-        image: redis
+        image: redis:7.4.2
         ports:
             - "6379:6379"
 
     anycable-go:
-        image: anycable/anycable-go
+        image: anycable/anycable-go:1.6.0-rc.3-mrb
         depends_on:
             redis:
                 condition: service_started
         environment:
-            ANYCABLE_REDIS_URL: "redis://redis:6379/1"
+            ANYCABLE_REDIS_URL: "redis://redis:6379"
             ANYCABLE_RPC_HOST: "anycable:50051"
             ANYCABLE_DEBUG: "true"
             ANYCABLE_HOST: 0.0.0.0
             ANYCABLE_PUBLIC: true
+            ANYCABLE_BROADCAST_ADAPTER: redisx
         ports:
             - "8080:8080"
 
@@ -68,6 +69,7 @@ services:
             REDIS_URL: redis://redis:6379
             ANYCABLE_REDIS_URL: "redis://redis:6379"
             ANYCABLE_RPC_HOST: "anycable:50051"
+            ANYCABLE_BROADCAST_ADAPTER: redisx
         depends_on:
             db:
                 condition: service_healthy
