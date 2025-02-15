@@ -1,5 +1,5 @@
 .container {
-    width: 80%;
+    width: 64%;
     margin: 20px auto;
 }
 
@@ -11,6 +11,11 @@
     border: 1px solid #ccc;
     border-radius: 8px;
     background-color: #f9f9f9;
+}
+
+.videoCard{
+    display: flex;
+    margin-bottom: 20px;
 }
 
 .video {
@@ -30,12 +35,12 @@
 }
 
 .sharedBy {
-    font-size: 14px;
+    /*font-size: 14px;*/
     color: #555;
 }
 
 .reactions {
-    font-size: 14px;
+    /*font-size: 14px;*/
     margin-top: 5px;
 }
 
@@ -43,8 +48,13 @@
     font-size: 14px;
     margin-top: 10px;
     color: #333;
-    width: 200px; /* Adjust width as needed */
-    white-space: nowrap;
+    width: 600px; /* Adjust width as needed */
+
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* Limit to 5 lines */
+    -webkit-box-orient: vertical;
+
     overflow: hidden;
     text-overflow: ellipsis;
 }
+

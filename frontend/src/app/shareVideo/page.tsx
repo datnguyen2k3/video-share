@@ -1,10 +1,10 @@
 "use client";
 import React, { useState } from "react";
-import styles from "../../styles/youtubeShareForm.module.css";
-import Headers from "../../components/Headers";
+import styles from "@/app/styles/youtubeShareForm.module.css";
+import Headers from "@/app/components/Headers";
 import axios from "axios";
 import { getAuthorization } from "../../../utils/auth";
-import useAuth from "@/hooks/useAuth";
+import useAuth from "@/app/hooks/useAuth";
 import { useRouter } from "next/navigation";
 
 const YoutubeShareForm: React.FC = () => {

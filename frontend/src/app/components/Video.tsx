@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import styles from "../styles/video.module.css";
-import { fetchYoutubeVideoData } from "../../utils/youtubeApi";
-import { VideoType } from "@/types/modals";
+import { fetchYoutubeVideoData } from "../../../utils/youtubeApi";
+import { VideoType } from "@/app/types/modals";
 
 const Video: React.FC<{ videoDetail: VideoType }> = ({ videoDetail }) => {
   const [video, setVideo] = useState<VideoType>({} as VideoType);
@@ -30,6 +30,7 @@ const Video: React.FC<{ videoDetail: VideoType }> = ({ videoDetail }) => {
         <p className={styles.reactions}>
           {video.likes} 👍 {video.dislikes} 👎
         </p>
+          <p>Description:</p>
         <p className={styles.description}>{video.description}</p>
       </div>
     </div>

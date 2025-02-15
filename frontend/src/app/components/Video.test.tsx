@@ -1,11 +1,11 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import Video from "./Video";
-import { fetchYoutubeVideoData } from "../../utils/youtubeApi";
-import { VideoType } from "@/types/modals";
+import { fetchYoutubeVideoData } from "../../../utils/youtubeApi";
+import { VideoType } from "@/app/types/modals";
 
 // Mock the YouTube API utility
-jest.mock("../../utils/youtubeApi");
+jest.mock("../../../utils/youtubeApi");
 
 describe("Video Component", () => {
   const mockVideoDetail: VideoType = {

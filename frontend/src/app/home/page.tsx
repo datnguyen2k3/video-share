@@ -1,14 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Header from "@/components/Headers";
-import styles from "../../styles/video.module.css";
+import Header from "@/app/components/Headers";
+import styles from "@/app/styles/video.module.css";
 import axios from "axios";
-import Video from "@/components/Video";
-import { VideoType } from "@/types/modals";
+import Video from "@/app/components/Video";
+import { VideoType } from "@/app/types/modals";
 import { getAuthorization } from "../../../utils/auth";
-import useAuth from "@/hooks/useAuth";
-import Toast from "@/components/Toast";
-import { useWebSocket } from "@/contexts/WebSocketContext";
+import useAuth from "@/app/hooks/useAuth";
+import Toast from "@/app/components/Toast";
+import { useWebSocket } from "@/app/contexts/WebSocketContext";
 
 const VideoList: React.FC = () => {
   const [videos, setVideos] = useState([]);
@@ -17,7 +17,7 @@ const VideoList: React.FC = () => {
     message: "",
     type: "success" as "success" | "error",
   });
-  const { connected } = useWebSocket();
+  useWebSocket();
   useAuth();
   useEffect(() => {
     if (!localStorage.getItem("userData")) {

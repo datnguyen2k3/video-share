@@ -9,7 +9,8 @@ const useAuth = () => {
       if (!userData) {
         router.push("/login");
       }
-    } catch (error) {
+    } catch (err) {
+      console.error(err)
       router.push("/login");
     }
   }, [router]);

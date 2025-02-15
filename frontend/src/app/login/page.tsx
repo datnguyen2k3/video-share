@@ -1,12 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import styles from "../../styles/authen.module.css";
-import Header from "@/components/Headers";
+import styles from "@/app/styles/authen.module.css";
+import Header from "@/app/components/Headers";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authSuccessfully } from "../../../utils/auth";
-import Toast from "@/components/Toast";
+import Toast from "@/app/components/Toast";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState("");
