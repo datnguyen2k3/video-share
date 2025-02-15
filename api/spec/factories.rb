@@ -1,4 +1,3 @@
-# spec/factories/users.rb
 FactoryBot.define do
   factory :user do
     name { "John Doe" }
@@ -7,7 +6,6 @@ FactoryBot.define do
   end
 end
 
-# spec/factories/videos.rb
 FactoryBot.define do
   factory :video do
     youtube_id { "abcd1234" }
