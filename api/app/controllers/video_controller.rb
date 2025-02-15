@@ -5,7 +5,10 @@ class VideoController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def create
-    video = ::VideoServices::Create.new(create_video_params).call
+    video = ::VideoServices::Create.new(
+      create_video_params,
+      current_user
+    ).call
     render json: {
       video: VideoSerializer.new(video).serializable_hash
     }, status: :created

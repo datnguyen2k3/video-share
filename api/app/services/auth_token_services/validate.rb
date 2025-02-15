@@ -1,8 +1,5 @@
-require_relative 'concern/helper'
-
 module AuthTokenServices
   class Validate
-    include Concern::Helper
 
     attr_reader :token
 
@@ -11,12 +8,12 @@ module AuthTokenServices
     end
 
     def call
-      payload = JWT.decode(token, SECRET_KEY)[0]
+      payload = JWT.decode(token, ENV['SECRET_KEY'])[0]
       user_id = payload['user_id']
 
-      user = ::User.find(user_id)
+      user = ::User.find_by(id: user_id)
       unless user
-        raise Exceptions::InvalidTokenError
+        raise InvalidTokenError
       end
 
       user

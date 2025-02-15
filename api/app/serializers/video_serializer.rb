@@ -8,4 +8,12 @@ class VideoSerializer < ActiveModel::Serializer
   def owner_email
     object.owner.email
   end
+
+  def created_at
+    object.created_at.iso8601
+  end
+
+  def updated_at
+    object.updated_at.iso8601
+  end
 end
