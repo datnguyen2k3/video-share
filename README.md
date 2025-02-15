@@ -18,55 +18,142 @@
 
 ## Without Docker
 
-- Install Redis
-
 ### Backend
 - Go to backend folder
 ```bash
   cd api
 ```
-- Install ruby 3.2.2, depends on your OS:
-    - [Install Ruby on Ubuntu](https://linuxize.com/post/how-to-install-ruby-on-ubuntu-20-04/)
-    - [Install Ruby on Windows](https://rubyinstaller.org/)
-    - [Install Ruby on MacOS](https://stackify.com/install-ruby-on-your-mac-everything-you-need-to-get-going/)
-- Check if Ruby is installed, it should return version 3.2.2
+
+#### Install Postgres
+
+Make sure you install postgres url `localhost:5432` with username and password is `postgres`
+
+- For Mac
+```bash
+  brew install postgresql
+  brew services start postgresql
+  psql postgres
+  ALTER USER postgres WITH PASSWORD 'postgres';
+  \q
+```
+
+- For Linux
+```bash
+  sudo apt update
+  sudo apt install postgresql postgresql-contrib -y
+  sudo -i -u postgres psql
+  ALTER USER postgres WITH PASSWORD 'postgres';
+  \q
+```
+
+#### Install Redis
+You should install redis with url `redis://localhost:6379`
+- Ubuntu/Debian
+```bash
+  sudo apt update
+  sudo apt install redis-server -y
+  sudo systemctl start redis
+```
+- MacOS with Homebrew
+```bash
+  brew install redis
+  brew services start redis
+```
+- Window with WSL
+```bash 
+  wsl --install
+  wsl
+  sudo apt update && sudo apt install redis-server -y
+```
+
+#### Install Ruby 3.2.2
+- For Mac
+```bash
+  brew install rbenv ruby-build
+  echo 'eval "$(rbenv init -)"' >> ~/.zshrc
+  source ~/.zshrc
+  rbenv install 3.2.2
+  brew install openssl readline libyaml gmp
+  rbenv global 3.2.2
+```
+
+- For Linux
+```bash
+  sudo apt update
+  sudo apt install -y git curl build-essential libssl-dev libreadline-dev zlib1g-dev
+  git clone https://github.com/rbenv/rbenv.git ~/.rbenv
+  echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bashrc
+  echo 'eval "$(rbenv init - bash)"' >> ~/.bashrc
+  source ~/.bashrc
+  git clone https://github.com/rbenv/ruby-build.git ~/.rbenv/plugins/ruby-build
+  echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bashrc
+  source ~/.bashrc
+  rbenv install 3.2.2
+  rbenv global 3.2.2
+```
+
+- For window
+  + Follow instruction in here: https://rubyinstaller.org/
+
+Check if Ruby is installed, it should return version 3.2.2
 ```bash
   ruby -v
 ```
+
+#### Install dependencies
 - Install bundler
 ```bash
   gem install bundler
 ```
+
 - Install dependencies
 ```bash
   bundle install
 ```
+
+- If you using mac and have error with `pg` when `bundle install`, try to
+```bash
+  brew install libpq
+  bundle config --local build.pg --with-opt-dir="$(brew --prefix libpq)"
+```
+
 - Create database
 ```bash
   bundle exec rails db:create
   bundle exec rails db:migrate
 ```
-- Replace variable in file .env
 
-- Start the API server
+#### Start the API server
 ```bash
   bundle exec rails s
 ```
 
-- Start the sidekiq worker (background jobs)
+#### Start the sidekiq worker (background jobs)
 ```bash
   bundle exec sidekiq
 ```
 
-- Start anycable RPC server (server interact with websocket server)
+#### Start anycable RPC server (server interact with websocket server)
 ```bash
   bundle exec anycable
 ```
 
-- Start the websocket server
-- Replace anycable-go-linx with anycable-go depending on your OS by download in here: https://github.com/anycable/anycable-go/releases/tag/v1.5.6
+#### Start the websocket server
+- For window
 ```bash
-  ./anycable-go-linx 
+  ./anycable-go-win.exe 
 ```
 
-- If commands are not working, try to add sudo if you get permission denied of these commands
+- For linux
+```bash
+  ./anycable-go-winlinux
+```
+
+- For mac
+```bash
+  brew install anycable-go
+  anycable-go
+```
+
+#### Possible errors 
+- If those commands are not working, try to add `sudo` if you get permission denied of these commands

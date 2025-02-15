@@ -4,3 +4,5 @@ anycable:
     bundle exec anycable
 ws:
     ./anycable-go-win.exe --redis_url="redis://default:ipFx6sxvozj2RbOETQO79aXHipQ9mWyZ@redis-18042.crce178.ap-east-1-1.ec2.redns.redis-cloud.com:18042"
+redis:
+    redis://default:ipFx6sxvozj2RbOETQO79aXHipQ9mWyZ@redis-18042.crce178.ap-east-1-1.ec2.redns.redis-cloud.com:18042
