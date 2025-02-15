@@ -1,13 +1,13 @@
 class SendNotificationJob
   include Sidekiq::Job
 
-  def perform(video_id, owner_id, youtube_id, owner_email, owner_name)
-    ActionCable.server.broadcast 'notifications', {
-      video_id: video_id,
-      owner_id: owner_id,
-      youtube_id: youtube_id,
-      owner_email: owner_email,
-      owner_name: owner_name
-    }
+  sidekiq_options retry: 3
+
+  def perform(video_id)
+    video = Video.find_by(id: video_id)
+
+    return if video.nil?
+
+    ActionCable.server.broadcast 'notifications', VideoSerializer.new(video).as_json
   end
 end
