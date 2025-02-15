@@ -18,16 +18,14 @@ module UserServices
 
     def validate_existed_user
       existed_user = ::User.find_by(email: params[:email])
-      if existed_user.nil?
-        raise NotFoundUserError
-      end
+      raise NotFoundUserError unless existed_user
 
       @user = existed_user
     end
 
     def validate_match_password
       unless user&.authenticate(params[:password])
-        raise ::InvalidPasswordError
+        raise InvalidPasswordError
       end
     end
   end
