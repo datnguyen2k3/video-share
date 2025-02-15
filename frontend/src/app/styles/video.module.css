@@ -1,0 +1,60 @@
+.container {
+    width: 64%;
+    margin: 20px auto;
+}
+
+.movieCard {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+}
+
+.videoCard{
+    display: flex;
+    margin-bottom: 20px;
+}
+
+.video {
+    width: 300px;
+    height: 180px;
+    margin-right: 15px;
+}
+
+.details {
+    flex: 1;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: bold;
+    color: red;
+}
+
+.sharedBy {
+    /*font-size: 14px;*/
+    color: #555;
+}
+
+.reactions {
+    /*font-size: 14px;*/
+    margin-top: 5px;
+}
+
+.description {
+    font-size: 14px;
+    margin-top: 10px;
+    color: #333;
+    width: 600px; /* Adjust width as needed */
+
+    display: -webkit-box;
+    -webkit-line-clamp: 5; /* Limit to 5 lines */
+    -webkit-box-orient: vertical;
+
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+

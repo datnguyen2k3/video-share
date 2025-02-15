@@ -1,68 +1,66 @@
-import React from "react";
-import Header from "@/components/Headers";
-import styles from "../../styles/videoList.module.css";
-
-const movies = [
-    {
-        id: 1,
-        title: "Movie Title 1",
-        sharedBy: "someone@gmail.com",
-        likes: 89,
-        dislikes: 12,
-        description: "This is a great movie about...",
-        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    },
-    {
-        id: 2,
-        title: "Movie Title 2",
-        sharedBy: "someone@gmail.com",
-        likes: 120,
-        dislikes: 5,
-        description: "An amazing journey into...",
-        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    },
-    {
-        id: 3,
-        title: "Movie Title 3",
-        sharedBy: "someone@gmail.com",
-        likes: 45,
-        dislikes: 8,
-        description: "A thrilling story about...",
-        videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    },
-];
+"use client";
+import React, { useEffect, useState } from "react";
+import Header from "@/app/components/Headers";
+import styles from "@/app/styles/video.module.css";
+import axios from "axios";
+import Video from "@/app/components/Video";
+import { VideoType } from "@/app/types/modals";
+import { getAuthorization } from "../../../utils/auth";
+import useAuth from "@/app/hooks/useAuth";
+import Toast from "@/app/components/Toast";
+import { useWebSocket } from "@/app/contexts/WebSocketContext";
 
 const VideoList: React.FC = () => {
-    return (
-        <>
-            <Header />
-            <div className={styles.container}>
-                {movies.map((movie) => (
-                    <div key={movie.id} className={styles.movieCard}>
-                        <iframe
-                            className={styles.video}
-                            src={movie.videoUrl}
-                            title={movie.title}
-                            frameBorder="0"
-                            allowFullScreen
-                        ></iframe>
-                        <div className={styles.details}>
-                            <h2 className={styles.title}>{movie.title}</h2>
-                            <p className={styles.sharedBy}>
-                                Shared by: {movie.sharedBy}
-                            </p>
-                            <p className={styles.reactions}>
-                                {movie.likes} 👍 {movie.dislikes} 👎
-                            </p>
-                            <p className={styles.description}>
-                                {movie.description}
-                            </p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </>
-    );
+  const [videos, setVideos] = useState([]);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success" as "success" | "error",
+  });
+  useWebSocket();
+  useAuth();
+  useEffect(() => {
+    if (!localStorage.getItem("userData")) {
+      return;
+    }
+    axios
+      .get(process.env.NEXT_PUBLIC_VIDEO_API || "", {
+        headers: {
+          Authorization: getAuthorization(),
+        },
+      })
+      .then((res) => {
+        setVideos(res.data.videos);
+      })
+      .catch((err) => {
+        let additionalMessage = "";
+        if (err.response.status == "401") {
+          additionalMessage = "Please log out and log in again.";
+        }
+        setToast({
+          show: true,
+          message: `${err.response.data.error}. ${additionalMessage}`,
+          type: "error",
+        });
+      });
+  }, []);
+
+  return (
+    <>
+      <Header />
+      <Toast
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
+      <div className={styles.container}>
+        {videos.map((video: VideoType) => (
+          <Video key={video.youtube_id} videoDetail={video} />
+        ))}
+      </div>
+    </>
+  );
 };
 
 export default VideoList;

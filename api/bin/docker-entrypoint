@@ -1,8 +1,12 @@
-#!/bin/bash -e
+#!/bin/bash
+set -e
 
-# If running the rails server then create or migrate existing database
-if [ "${1}" == "./bin/rails" ] && [ "${2}" == "server" ]; then
-  ./bin/rails db:prepare
+# Wait for database to be available
+
+if [ "$RUN_MIGRATIONS" = "true" ]; then
+  echo "Database is up, running migrations..."
+  bundle exec rails db:create || true
+  bundle exec rails db:migrate
 fi
 
-exec "${@}"
+exec "$@"

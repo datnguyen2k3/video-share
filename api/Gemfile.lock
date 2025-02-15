@@ -348,6 +348,7 @@ PLATFORMS
   arm64-darwin-24
   x64-mingw-ucrt
   x86_64-linux
+  aarch64-linux
 
 DEPENDENCIES
   active_model_serializers (~> 0.10.0)
