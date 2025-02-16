@@ -36,7 +36,7 @@ const Register: React.FC = () => {
       return;
     }
     axios
-      .post(process.env.NEXT_PUBLIC_REGISTER_API || "", {
+      .post(process.env.NEXT_PUBLIC_BE_HOST + "auth/user" || "", {
         name,
         email,
         password,
