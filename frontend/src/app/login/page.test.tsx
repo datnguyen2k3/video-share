@@ -2,120 +2,137 @@ import React from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import Login from "./page";
 import axios from "axios";
-import { useRouter } from "next/navigation";
-import { authSuccessfully } from "../../../utils/auth";
 
-// Mock dependencies
+// Mock axios
 jest.mock("axios");
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+
+// Mock Next.js useRouter
+const pushMock = jest.fn();
 jest.mock("next/navigation", () => ({
-  useRouter: jest.fn(),
+  useRouter: () => ({
+    push: pushMock,
+  }),
 }));
+
+// Mock the authSuccessfully function
+const authSuccessfullyMock = jest.fn();
 jest.mock("../../../utils/auth", () => ({
-  authSuccessfully: jest.fn(),
+  authSuccessfully: (res: any, email: string, router: any) =>
+    authSuccessfullyMock(res, email, router),
 }));
 
 // Mock child components
 // eslint-disable-next-line react/display-name
-jest.mock("@/app/components/Headers", () => () => (
-  <div data-testid="header">Mock Header</div>
-));
+jest.mock("@/app/components/Headers", () => () => <div>Header Component</div>);
 jest.mock(
   "@/app/components/Toast",
   () =>
     // eslint-disable-next-line react/display-name
-    ({ show, message }: any) =>
-      show ? <div data-testid="toast">{message}</div> : null
+    ({
+      show,
+      message,
+    }: {
+      show: boolean;
+      message: string;
+      onClose: () => void;
+    }) =>
+      show ? <div>{message}</div> : null
 );
-jest.mock("next/link", () => {
-  // eslint-disable-next-line react/display-name
-  return ({ children }: { children: React.ReactNode }) => <>{children}</>;
+
+beforeEach(() => {
+  localStorage.clear();
+  jest.clearAllMocks();
 });
 
-describe("Login Component", () => {
-  const push = jest.fn();
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    (useRouter as jest.Mock).mockReturnValue({ push });
-  });
-
-  it("renders login page correctly", () => {
+describe("Login Page", () => {
+  test("renders login page with form fields", () => {
     render(<Login />);
-    expect(screen.getByTestId("header")).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/password/i)).toBeInTheDocument();
+    expect(screen.getByText(/Header Component/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Login/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/Email:/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Password:/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /login/i })).toBeInTheDocument();
   });
 
-  it("shows validation error for invalid password", async () => {
+  test("displays error toast when password is invalid", async () => {
     render(<Login />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const loginButton = screen.getByRole("button", { name: /login/i });
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    // Invalid password (missing uppercase, special char, etc.)
-    fireEvent.change(passwordInput, { target: { value: "invalidpass" } });
-    fireEvent.click(loginButton);
-
-    await waitFor(() => {
-      expect(screen.getByTestId("toast")).toHaveTextContent(
-        "Password must contain at least 8 characters, including uppercase, lowercase, numbers and special characters"
-      );
+    // Fill in email and an invalid password.
+    fireEvent.change(screen.getByLabelText(/Email:/i), {
+      target: { value: "user@example.com" },
     });
-    expect(axios.post).not.toHaveBeenCalled();
-    expect(authSuccessfully).not.toHaveBeenCalled();
+    fireEvent.change(screen.getByLabelText(/Password:/i), {
+      target: { value: "invalid" }, // does not meet regex criteria
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    // Expect error toast message.
+    await waitFor(() => {
+      expect(
+        screen.getByText(
+          /Password must contain at least 8 characters, including uppercase, lowercase, numbers and special characters/i
+        )
+      ).toBeInTheDocument();
+    });
+
+    expect(mockedAxios.post).not.toHaveBeenCalled();
   });
 
-  it("submits form and calls axios and authSuccessfully on valid login", async () => {
-    const mockResponse = { data: {} };
-    (axios.post as jest.Mock).mockResolvedValueOnce(mockResponse);
+  test("calls axios post and authSuccessfully on valid login", async () => {
+    const fakeResponse = { data: { token: "dummy-token" } };
+    mockedAxios.post.mockResolvedValueOnce(fakeResponse);
 
     render(<Login />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const loginButton = screen.getByRole("button", { name: /login/i });
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    // Valid password: meets regex criteria
-    fireEvent.change(passwordInput, { target: { value: "Valid@123" } });
-    fireEvent.click(loginButton);
+    // Provide valid credentials.
+    fireEvent.change(screen.getByLabelText(/Email:/i), {
+      target: { value: "user@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText(/Password:/i), {
+      target: { value: "ValidPass1!" },
+    });
 
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    // Wait until axios.post is called with expected URL and payload.
     await waitFor(() => {
-      expect(axios.post).toHaveBeenCalledWith(
-        expect.any(String),
-        expect.objectContaining({
-          email: "test@example.com",
-          password: "Valid@123",
-        })
+      expect(mockedAxios.post).toHaveBeenCalledWith(
+        expect.stringContaining("auth/token/"),
+        { email: "user@example.com", password: "ValidPass1!" }
       );
-      expect(authSuccessfully).toHaveBeenCalledWith(
-        mockResponse,
-        "test@example.com",
+    });
+
+    // Verify authSuccessfully was called on successful post.
+    await waitFor(() => {
+      expect(authSuccessfullyMock).toHaveBeenCalledWith(
+        fakeResponse,
+        "user@example.com",
         expect.any(Object)
       );
     });
   });
 
-  it("displays error toast when axios post fails", async () => {
-    const errorResponse = {
-      response: { data: { error: "Invalid credentials" } },
-    };
-    (axios.post as jest.Mock).mockRejectedValueOnce(errorResponse);
+  test("displays error toast when axios post fails", async () => {
+    const errorResponse = { response: { data: { error: "Login failed" } } };
+    mockedAxios.post.mockRejectedValueOnce(errorResponse);
 
     render(<Login />);
-    const emailInput = screen.getByLabelText(/email/i);
-    const passwordInput = screen.getByLabelText(/password/i);
-    const loginButton = screen.getByRole("button", { name: /login/i });
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.change(passwordInput, { target: { value: "Valid@123" } });
-    fireEvent.click(loginButton);
+    // Provide valid credentials but axios will fail.
+    fireEvent.change(screen.getByLabelText(/Email:/i), {
+      target: { value: "user@example.com" },
+    });
+    fireEvent.change(screen.getByLabelText(/Password:/i), {
+      target: { value: "ValidPass1!" },
+    });
 
+    fireEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    // Expect the error toast message from axios failure.
     await waitFor(() => {
-      expect(screen.getByTestId("toast")).toHaveTextContent(
-        "Invalid credentials"
-      );
+      expect(screen.getByText("Login failed")).toBeInTheDocument();
     });
   });
 });
