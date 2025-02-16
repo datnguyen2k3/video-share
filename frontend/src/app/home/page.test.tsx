@@ -113,9 +113,9 @@ describe("VideoList (Home Page)", () => {
 
     render(<VideoList />);
 
-    // Wait for axios.get call.
     await waitFor(() => {
       expect(mockedAxios.get).toHaveBeenCalledWith("http://localhost/video/", {
+        params: { cursor: 0 },
         headers: { Authorization: "Bearer testtoken" },
       });
     });
@@ -136,7 +136,7 @@ describe("VideoList (Home Page)", () => {
     localStorage.setItem("userData", JSON.stringify(userData));
 
     const errorResponse = {
-      response: { status: "401", data: { error: "Unauthorized" } },
+      response: { status: 401, data: { error: "Unauthorized" } },
     };
     mockedAxios.get.mockRejectedValueOnce(errorResponse);
 
@@ -224,7 +224,7 @@ describe("VideoList (Home Page)", () => {
     // NOTE: If your component truly ignores duplicate videos,
     // the expected count should remain 1. If it adds duplicate videos,
     // update the expectation accordingly. Here we update to 2 (as observed).
-    expect(screen.getAllByTestId("video").length).toBe(2);
+    expect(screen.getAllByTestId("video").length).toBe(1);
   });
 
   it("dismisses toast when Close button is clicked", async () => {
