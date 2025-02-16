@@ -65,12 +65,12 @@ RSpec.describe "Video API", type: :request do
         json_response = JSON.parse(response.body)
 
         expect(json_response["videos"].size).to eq(3)
-        expect(json_response["videos"].first["youtube_id"]).to eq(videos.first.youtube_id)
+        expect(json_response["videos"].first["youtube_id"]).to eq(videos.third.youtube_id)
       end
     end
 
-    context "when cursor is too large" do
-      let(:params) { { cursor: 10000000 } }
+    context "when cursor is too small" do
+      let(:params) { { cursor: 0 } }
 
       it "returns 2 videos" do
         get "/video", params: params, headers: headers
