@@ -15,10 +15,12 @@ jest.mock("../../../utils/auth", () => ({
 }));
 
 // Mock child components
+// eslint-disable-next-line react/display-name
 jest.mock("@/app/components/Headers", () => () => (
   <div data-testid="header">Mock Header</div>
 ));
 jest.mock("@/app/components/Toast", () => {
+  // eslint-disable-next-line react/display-name
   return ({ show, message }: any) =>
     show ? <div data-testid="toast">{message}</div> : null;
 });

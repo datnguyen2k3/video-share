@@ -13,18 +13,19 @@ jest.mock("../contexts/WebSocketContext", () => ({
 jest.mock("@/app/hooks/useAuth");
 
 // Mock child components
+// eslint-disable-next-line react/display-name
 jest.mock("@/app/components/Headers", () => () => (
   <div data-testid="header">Mock Header</div>
 ));
+// eslint-disable-next-line react/display-name
 jest.mock("@/app/components/Video", () => ({ videoDetail }: any) => (
   <div data-testid={`video-${videoDetail.youtube_id}`}>Mock Video</div>
 ));
-jest.mock(
-  "@/app/components/Toast",
-  () =>
-    ({ show, message, type, onClose }: any) => {
-      return show ? <div data-testid="toast">{message}</div> : null;
-    }
+jest.mock("@/app/components/Toast", () =>
+  // eslint-disable-next-line react/display-name
+  ({ show, message }: any) => {
+    return show ? <div data-testid="toast">{message}</div> : null;
+  }
 );
 
 describe("VideoList Component", () => {

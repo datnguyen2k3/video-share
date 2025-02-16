@@ -24,7 +24,7 @@ const VideoList: React.FC = () => {
       return;
     }
     axios
-      .get(process.env.NEXT_PUBLIC_VIDEO_API || "", {
+      .get(process.env.NEXT_PUBLIC_BE_HOST + "video/" || "", {
         headers: {
           Authorization: getAuthorization(),
         },

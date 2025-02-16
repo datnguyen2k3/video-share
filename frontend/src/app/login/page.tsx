@@ -36,7 +36,7 @@ const Login: React.FC = () => {
       return;
     }
     axios
-      .post(process.env.NEXT_PUBLIC_LOGIN_API || "", {
+      .post(process.env.NEXT_PUBLIC_BE_HOST + "auth/token/" || "", {
         email,
         password,
       })

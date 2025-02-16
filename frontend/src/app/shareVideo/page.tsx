@@ -15,7 +15,7 @@ const YoutubeShareForm: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     axios.post(
-      process.env.NEXT_PUBLIC_VIDEO_API || "",
+      process.env.NEXT_PUBLIC_BE_HOST + "video/" || "",
       { url },
       {
         headers: {
