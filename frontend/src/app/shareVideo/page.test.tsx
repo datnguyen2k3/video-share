@@ -98,9 +98,13 @@ describe("YoutubeShareForm", () => {
     expect(screen.getByRole("button", { name: /Share/i })).toBeInTheDocument();
   });
 
-  test("submits form and calls axios.post and router.push", async () => {
+  test("submits form and calls axios.post and navigates using router.push", async () => {
     // Set environment variable for backend host.
     process.env.NEXT_PUBLIC_BE_HOST = "http://localhost/";
+
+    // Ensure axios.post returns a promise.
+    mockedAxios.post.mockResolvedValue({ data: {} });
+
     const testUrl = "https://youtu.be/testvideo";
     render(<YoutubeShareForm />);
 
@@ -118,7 +122,8 @@ describe("YoutubeShareForm", () => {
         { headers: { Authorization: "Bearer token" } }
       );
     });
-    // Verify that router.push("/") is called after submission.
+
+    // Expect router.push("/") to be called after form submission.
     await waitFor(() => {
       expect(pushMock).toHaveBeenCalledWith("/");
     });
