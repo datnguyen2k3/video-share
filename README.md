@@ -8,13 +8,15 @@
   - User can receive notifications real-time when others share a video
 
 # Prerequisites
-  - Frontend: Node v22
-  - Backend: Ruby v3.2.2
-  - Database: Redis v7, Postgres v17
+
+- Frontend: Node v22
+- Backend: Ruby v3.2.2
+- Database: Redis v7, Postgres v17
 
 # Installation
 
 - Clone the repository
+
 ```bash
   git clone https://github.com/datnguyen2k3/video-share.git
   cd video-share
@@ -24,6 +26,7 @@
 
 - You need to install docker first
 - Then run
+
 ```bash
   docker-compose up
 ```
@@ -31,15 +34,67 @@
 ## Without Docker
 
 ### Frontend
+
+#### Install NVM & NPM
+
+- For Mac
+
+```bash
+brew install nvm
+mkdir ~/.nvm
+echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
+echo '[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"' >> ~/.zshrc
+echo '[ -s "/opt/homebrew/opt/nvm/etc/bash_completion" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion"' >> ~/.zshrc
+source ~/.zshrc
+nvm install --lts
+nvm use --lts
+```
+
+- For Linux
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bashrc
+echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> ~/.bashrc
+source ~/.bashrc
+nvm install --lts
+nvm use --lts
+```
+
+- For Windows
+  - Follow instructions here: nvm-windows (https://github.com/coreybutler/nvm-windows)
+
+#### How to run
+
 - Go to frontend folder
+
 ```bash
   cd frontend
 ```
 
-- Install `npm` in your OS, then go to folder `frontend`, then read Readme file for íntruction 
+- Run the app
+
+```bash
+  npm run dev
+  # or
+  yarn dev
+  # or
+  pnpm dev
+  # or
+  bun dev
+```
+
+- Open [http://localhost:3001](http://localhost:3000) with your browser to see the result.
+- Run test:
+
+```bash
+    npm run test
+```
 
 ### Backend
+
 - Go to backend folder
+
 ```bash
   cd api
 ```
@@ -49,6 +104,7 @@
 Make sure you install postgres url `localhost:5432` with username and password is `postgres`
 
 - For Mac
+
 ```bash
   brew install postgresql
   brew services start postgresql
@@ -58,6 +114,7 @@ Make sure you install postgres url `localhost:5432` with username and password i
 ```
 
 - For Linux
+
 ```bash
   sudo apt update
   sudo apt install postgresql postgresql-contrib -y
@@ -67,27 +124,36 @@ Make sure you install postgres url `localhost:5432` with username and password i
 ```
 
 #### Install Redis
+
 You should install redis with url `redis://localhost:6379`
+
 - Ubuntu/Debian
+
 ```bash
   sudo apt update
   sudo apt install redis-server -y
   sudo systemctl start redis
 ```
+
 - MacOS with Homebrew
+
 ```bash
   brew install redis
   brew services start redis
 ```
+
 - Window with WSL
-```bash 
+
+```bash
   wsl --install
   wsl
   sudo apt update && sudo apt install redis-server -y
 ```
 
 #### Install Ruby 3.2.2
+
 - For Mac
+
 ```bash
   brew install rbenv ruby-build
   echo 'eval "$(rbenv init -)"' >> ~/.zshrc
@@ -98,6 +164,7 @@ You should install redis with url `redis://localhost:6379`
 ```
 
 - For Linux
+
 ```bash
   sudo apt update
   sudo apt install -y git curl build-essential libssl-dev libreadline-dev zlib1g-dev
@@ -113,76 +180,92 @@ You should install redis with url `redis://localhost:6379`
 ```
 
 - For window
-  + Follow instruction in here: https://rubyinstaller.org/
+  - Follow instruction in here: https://rubyinstaller.org/
 
 Check if Ruby is installed, it should return version 3.2.2
+
 ```bash
   ruby -v
 ```
 
 #### Install dependencies
+
 - Install bundler
+
 ```bash
   gem install bundler
 ```
 
 - Install dependencies
+
 ```bash
   bundle install
 ```
 
 - If you using mac and have error with `pg` when `bundle install`, try to
+
 ```bash
   brew install libpq
   bundle config --local build.pg --with-opt-dir="$(brew --prefix libpq)"
 ```
 
 - Create database
+
 ```bash
   bundle exec rails db:create
   bundle exec rails db:migrate
 ```
 
 #### Start the API server
+
 ```bash
   bundle exec rails s
 ```
 
 #### Start the sidekiq worker (background jobs)
+
 ```bash
   bundle exec sidekiq
 ```
 
 #### Start anycable RPC server (server interact with websocket server)
+
 ```bash
   bundle exec anycable
 ```
 
 #### Start the websocket server
+
 - For window
+
 ```bash
-  ./anycable-go-win.exe 
+  ./anycable-go-win.exe
 ```
 
 - For linux
+
 ```bash
   ./anycable-go-linux
 ```
 
 - For mac
+
 ```bash
   brew install anycable-go
   anycable-go
 ```
 
 #### Running test
+
 - Setup test database
+
 ```bash
   bundle exec rails db:create RAILS_ENV=test
   bundle exec rails db:migrate RAILS_ENV=test
 ```
 
 - Run test
+
 ```bash
   bundle exec rspec
 ```
@@ -192,4 +275,5 @@ Check if Ruby is installed, it should return version 3.2.2
 - After installation, go to `localhost:3001` to explore the app
 
 # Troubleshooting
+
 - If those commands are not working, try to add `sudo` if you get permission denied of these commands
