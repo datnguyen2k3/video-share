@@ -25,9 +25,9 @@ services:
       ANYCABLE_REDIS_URL: "redis://redis:6379"
       ANYCABLE_RPC_HOST: "anycable:50051"
       ANYCABLE_DEBUG: "true"
-      ANYCABLE_HOST: 0.0.0.0
-      ANYCABLE_PUBLIC: true
-      ANYCABLE_BROADCAST_ADAPTER: redisx
+      ANYCABLE_HOST: "0.0.0.0"
+      ANYCABLE_PUBLIC: "true"
+      ANYCABLE_BROADCAST_ADAPTER: "redisx"
     ports:
       - "8080:8080"
 
@@ -39,8 +39,8 @@ services:
       - "3000:3000"
     env_file: "./api/.env"
     environment:
-      POSTGRES_HOST: db
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: "db"
+      REDIS_URL: "redis://redis:6379"
     depends_on:
       db:
         condition: service_healthy
@@ -52,8 +52,8 @@ services:
     command: ["bundle", "exec", "sidekiq"]
     env_file: "./api/.env"
     environment:
-      POSTGRES_HOST: db
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: "db"
+      REDIS_URL: "redis://redis:6379"
     depends_on:
       db:
         condition: service_healthy
@@ -65,11 +65,11 @@ services:
     command: ["bundle", "exec", "anycable"]
     env_file: "./api/.env"
     environment:
-      POSTGRES_HOST: db
-      REDIS_URL: redis://redis:6379
+      POSTGRES_HOST: "db"
+      REDIS_URL: "redis://redis:6379"
       ANYCABLE_REDIS_URL: "redis://redis:6379"
       ANYCABLE_RPC_HOST: "anycable:50051"
-      ANYCABLE_BROADCAST_ADAPTER: redisx
+      ANYCABLE_BROADCAST_ADAPTER: "redisx"
     depends_on:
       db:
         condition: service_healthy
@@ -80,5 +80,5 @@ services:
     ports:
       - "3001:3001"
     environment:
-      NODE_ENV: production
+      NODE_ENV: "production"
       PORT: 3001

@@ -22,6 +22,12 @@
 
 ## With Docker
 
+- You need to install docker first
+- Then run
+```bash
+  docker-compose up
+```
+
 ## Without Docker
 
 ### Frontend
@@ -29,6 +35,8 @@
 ```bash
   cd frontend
 ```
+
+- Install `npm` in your OS, then go to folder `frontend`, then read Readme file for íntruction 
 
 ### Backend
 - Go to backend folder
@@ -180,6 +188,8 @@ Check if Ruby is installed, it should return version 3.2.2
 ```
 
 # Usage
+
+- After installation, go to `localhost:3001` to explore the app
 
 # Troubleshooting
 - If those commands are not working, try to add `sudo` if you get permission denied of these commands
