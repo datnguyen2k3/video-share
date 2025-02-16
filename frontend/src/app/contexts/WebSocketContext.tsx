@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createCable } from "@anycable/web";
 import Toast from "@/app/components/Toast";
 import { UserDataToken } from "../types/modals";
@@ -11,6 +17,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [userData, setUserData] = useState<UserDataToken | null>(null);
   const [message, setMessage] = useState<any>({});
+  const cableRef = useRef<any>(null);
   useEffect(() => {
     const userData = JSON.parse(localStorage.getItem("userData") || "null");
 
@@ -34,6 +41,7 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
     const cable = createCable(
       process.env.NEXT_PUBLIC_WEBSOCKET_URL + `?token=${token}` || ""
     );
+    cableRef.current = cable;
     cable.connect();
     const channel = cable.subscribeTo("NotificationChannel");
     channel.on("message", (data: any) => {

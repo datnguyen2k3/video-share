@@ -9,9 +9,13 @@ const Video: React.FC<{ videoDetail: VideoType }> = ({ videoDetail }) => {
   const [video, setVideo] = useState<VideoType>({} as VideoType);
   useEffect(() => {
     {
-      fetchYoutubeVideoData(videoDetail.youtube_id).then((res) => {
-        setVideo({ ...res.snippet, likes: res.statistics.likeCount });
-      });
+      fetchYoutubeVideoData(videoDetail.youtube_id)
+        .then((res) => {
+          setVideo({ ...res.snippet, likes: res.statistics.likeCount });
+        })
+        .catch((error) => {
+          console.error("Failed to fetch video data:", error);
+        });
     }
   }, [videoDetail]);
 
@@ -20,9 +24,10 @@ const Video: React.FC<{ videoDetail: VideoType }> = ({ videoDetail }) => {
       <iframe
         className={styles.video}
         src={`https://www.youtube.com/embed/${videoDetail.youtube_id}`}
-        title={video.title}
+        title={video.title || "YouTube video player"}
         frameBorder="0"
         allowFullScreen
+        role="iframe"
       ></iframe>
       <div className={styles.details}>
         <h2 className={styles.title}>{video.title}</h2>
@@ -30,7 +35,7 @@ const Video: React.FC<{ videoDetail: VideoType }> = ({ videoDetail }) => {
         <p className={styles.reactions}>
           {video.likes} 👍 {video.dislikes} 👎
         </p>
-          <p>Description:</p>
+        <p>Description:</p>
         <p className={styles.description}>{video.description}</p>
       </div>
     </div>
