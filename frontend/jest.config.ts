@@ -17,6 +17,7 @@ const config: Config = {
     "!src/**/index.{js,jsx,ts,tsx}",
     "!src/**/{layout}.{js,jsx,ts,tsx}",
     "!src/app/{layout,page}.tsx",
+    "!src/app/types/modals.ts",
   ],
   coverageDirectory: "coverage",
   coverageReporters: ["text", "lcov", "html", "text-summary"],

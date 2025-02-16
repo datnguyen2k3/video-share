@@ -22,16 +22,26 @@ const YoutubeShareForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    axios.post(
-      process.env.NEXT_PUBLIC_BE_HOST + "video/" || "",
-      { url },
-      {
-        headers: {
-          Authorization: getAuthorization(),
-        },
-      }
-    );
-    router.push("/");
+    axios
+      .post(
+        process.env.NEXT_PUBLIC_BE_HOST + "video/" || "",
+        { url },
+        {
+          headers: {
+            Authorization: getAuthorization(),
+          },
+        }
+      )
+      .then(() => {
+        router.push("/");
+      })
+      .catch((err) => {
+        setToast({
+          show: true,
+          message: err.response.data.error,
+          type: "error",
+        });
+      });
   };
 
   useEffect(() => {

@@ -273,6 +273,23 @@ Check if Ruby is installed, it should return version 3.2.2
 # Usage
 
 - After installation, go to `localhost:3001` to explore the app
+- For register page:
+  + Name should have at least 4 characters and only is alphabet
+  + Email should be valid email
+  + Password need at least 8 characters, and have at least a:
+    + special characters
+    + lowercase 
+    + uppercase 
+    + number
+- For login page:
+  + Email need to be exists
+  + Password need to be match
+- For homepage:
+  + Videos will show by the newest first
+  + Scroll down to see more videos
+- For share video page:
+  + The url must be following pattern: `https://www.youtube.com/watch?v=<YOUTUBE_ID>`
+  + The url is not shared by anyone before
 
 # Troubleshooting
 

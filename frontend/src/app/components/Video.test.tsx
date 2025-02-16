@@ -57,40 +57,23 @@ describe("Video Component", () => {
     );
 
     // Check if all elements are rendered
-    // ...existing code...
-    // Check if all elements are rendered
     expect(screen.getByText("Shared by: test@example.com")).toBeInTheDocument();
-    // expect(screen.getByText(/1000/)).toBeInTheDocument(); // Removed extra parenthesis
-    // expect(screen.getByText("👍")).toBeInTheDocument();
-    // ...existing code...
     expect(screen.getByText("Description:")).toBeInTheDocument();
     expect(screen.getByText("Test Video Description")).toBeInTheDocument();
   });
 
   it("handles YouTube API error gracefully", async () => {
-    // Mock console.error to prevent test output noise
-    const consoleSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {});
-
-    mockFetchYoutubeVideoData.mockRejectedValue(new Error("API Error"));
+    // Remove console.error spy; it's no longer needed
+    mockFetchYoutubeVideoData.mockRejectedValue({
+      response: { data: { error: "YouTube API Error" } },
+    });
 
     render(<Video videoDetail={mockVideoDetail} />);
 
+    // Wait for the toast to display the error message
     await waitFor(() => {
-      const iframe = screen.getByRole("iframe");
-      expect(iframe).toBeInTheDocument();
-      expect(iframe).toHaveAttribute(
-        "src",
-        `https://www.youtube.com/embed/${mockVideoDetail.youtube_id}`
-      );
+      expect(screen.getByText("YouTube API Error")).toBeInTheDocument();
     });
-
-    // Verify error was logged
-    expect(consoleSpy).toHaveBeenCalled();
-
-    // Restore console.error
-    consoleSpy.mockRestore();
   });
 
   it("updates when videoDetail prop changes", async () => {
