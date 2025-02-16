@@ -96,7 +96,6 @@ const VideoList: React.FC = () => {
         return;
       }
       setNewMessage(data);
-      console.log({ data });
       setToast({
         show: true,
         message: `Received message from ${data.owner_email}`,

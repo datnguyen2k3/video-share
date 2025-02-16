@@ -4,23 +4,39 @@ import { useEffect, useState } from "react";
 import styles from "../styles/video.module.css";
 import { fetchYoutubeVideoData } from "../../../utils/youtubeApi";
 import { VideoType } from "@/app/types/modals";
+import Toast from "./Toast";
 
 const Video: React.FC<{ videoDetail: VideoType }> = ({ videoDetail }) => {
   const [video, setVideo] = useState<VideoType>({} as VideoType);
+  const [toast, setToast] = useState({
+    show: false,
+    message: "",
+    type: "success" as "success" | "error",
+  });
   useEffect(() => {
     {
       fetchYoutubeVideoData(videoDetail.youtube_id)
         .then((res) => {
           setVideo({ ...res.snippet, likes: res.statistics.likeCount });
         })
-        .catch((error) => {
-          console.error("Failed to fetch video data:", error);
+        .catch((err) => {
+          setToast({
+            show: true,
+            message: err.response.data.error,
+            type: "error",
+          });
         });
     }
   }, [videoDetail]);
 
   return (
     <div key={video.id} className={styles.videoCard}>
+      <Toast
+        show={toast.show}
+        message={toast.message}
+        type={toast.type}
+        onClose={() => setToast({ ...toast, show: false })}
+      />
       <iframe
         className={styles.video}
         src={`https://www.youtube.com/embed/${videoDetail.youtube_id}`}
