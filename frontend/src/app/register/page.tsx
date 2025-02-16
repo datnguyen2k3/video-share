@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styles from "@/app/styles/authen.module.css";
 import Header from "@/app/components/Headers";
 import axios from "axios";
@@ -17,6 +17,12 @@ const Register: React.FC = () => {
     type: "success" as "success" | "error",
   });
   const router = useRouter();
+  useEffect(() => {
+    const userDataString = localStorage.getItem("userData");
+    if (userDataString) {
+      return;
+    }
+  }, []);
 
   const validatePassword = (password: string) => {
     const regex =

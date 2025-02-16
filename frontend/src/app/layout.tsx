@@ -1,4 +1,3 @@
-import { WebSocketProvider } from "@/app/contexts/WebSocketContext";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@/app/styles/globals.css";
@@ -26,7 +25,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <WebSocketProvider>{children}</WebSocketProvider>
+        {children}
       </body>
     </html>
   );
