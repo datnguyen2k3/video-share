@@ -9,6 +9,7 @@ class ApiExceptionHandlerMiddleware
     rescue ApiError => e
       json_response(e.response_body, e.status)
     rescue StandardError => e
+      Rails.logger.error(e)
       json_response({ error: "Server Error" }, 500)
     end
   end
