@@ -8,17 +8,17 @@ import { VideoType } from "@/app/types/modals";
 import { getAuthorization } from "../../../utils/auth";
 import useAuth from "@/app/hooks/useAuth";
 import Toast from "@/app/components/Toast";
-import { useWebSocket } from "@/app/contexts/WebSocketContext";
+import { useWebSocket } from "../contexts/WebSocketContext";
 
 const VideoList: React.FC = () => {
-  const [videos, setVideos] = useState([]);
+  const [videos, setVideos] = useState<VideoType[]>([]);
   const [toast, setToast] = useState({
     show: false,
     message: "",
     type: "success" as "success" | "error",
   });
-  useWebSocket();
   useAuth();
+  const { newMessage } = useWebSocket();
   useEffect(() => {
     if (!localStorage.getItem("userData")) {
       return;
@@ -44,6 +44,21 @@ const VideoList: React.FC = () => {
         });
       });
   }, []);
+
+  // Add new video when receiving WebSocket message
+  useEffect(() => {
+    console.log({ newMessage });
+    if (newMessage && Object.keys(newMessage).length > 0) {
+      // Check if video already exists to avoid duplicates
+      const videoExists = videos.some(
+        (video) => video.youtube_id === newMessage.youtube_id
+      );
+
+      if (!videoExists) {
+        setVideos((prevVideos) => [newMessage, ...prevVideos]);
+      }
+    }
+  }, [newMessage]);
 
   return (
     <>
