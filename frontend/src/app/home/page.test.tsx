@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Component } from "react";
 import {
   render,
   screen,
@@ -85,6 +85,24 @@ jest.mock("@anycable/web", () => ({
   createCable: jest.fn(() => cableMock),
 }));
 
+// A simple error boundary for testing purposes.
+class ErrorBoundary extends Component<any, { hasError: boolean }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError(error: any) {
+    return { hasError: true };
+  }
+  render() {
+    return this.state.hasError ? (
+      <div>Error occurred</div>
+    ) : (
+      this.props.children
+    );
+  }
+}
+
 beforeEach(() => {
   localStorage.clear();
   jest.clearAllMocks();
@@ -96,7 +114,7 @@ beforeEach(() => {
 });
 
 describe("VideoList (Home Page)", () => {
-  it("renders header, toast, and video container", () => {
+  test("renders header, toast, and video container", () => {
     // No axios.get call is expected when userData is missing.
     render(<VideoList />);
     expect(screen.getByText(/Header Component/i)).toBeInTheDocument();
@@ -104,7 +122,7 @@ describe("VideoList (Home Page)", () => {
     expect(screen.queryByRole("button", { name: /Close/i })).toBeNull();
   });
 
-  it("fetches videos on mount when userData exists and displays videos", async () => {
+  test("fetches videos on mount when userData exists and displays videos", async () => {
     // Set valid userData.
     const userData = {
       email: "user@example.com",
@@ -114,7 +132,7 @@ describe("VideoList (Home Page)", () => {
 
     const videosData = {
       videos: [{ youtube_id: "vid1" }, { youtube_id: "vid2" }],
-      next_cursor: null,
+      next_cursor: 5,
     };
     mockedAxios.get.mockResolvedValueOnce({ data: videosData });
 
@@ -135,7 +153,7 @@ describe("VideoList (Home Page)", () => {
     });
   });
 
-  it("shows error toast if axios.get fails with 401 error", async () => {
+  test("shows error toast if axios.get fails with 401 error", async () => {
     const userData = {
       email: "user@example.com",
       auth: { access_token: "dummyToken" },
@@ -156,12 +174,12 @@ describe("VideoList (Home Page)", () => {
     });
   });
 
-  it("does not fetch videos if userData is missing", () => {
+  test("does not fetch videos if userData is missing", () => {
     render(<VideoList />);
     expect(mockedAxios.get).not.toHaveBeenCalled();
   });
 
-  it("handles a cable message from a different user by showing a toast and adding a new video", async () => {
+  test("handles a cable message from a different user by showing a toast and adding a new video", async () => {
     const userData = {
       email: "user@example.com",
       auth: { access_token: "dummyToken" },
@@ -178,7 +196,7 @@ describe("VideoList (Home Page)", () => {
 
     render(<VideoList />);
 
-    // Wait for initial video to be rendered.
+    // Wait for the initial video to be rendered.
     await waitFor(() => {
       expect(screen.getAllByTestId("video").length).toBe(1);
     });
@@ -206,11 +224,10 @@ describe("VideoList (Home Page)", () => {
       expect(screen.getByText(/vid2/)).toBeInTheDocument();
     });
 
-    // Optionally invoke the cleanup function.
     if (cleanupFn) act(() => cleanupFn());
   });
 
-  it("ignores cable message from the same user (no toast, no new video)", async () => {
+  test("ignores cable message from the same user (no toast, no new video)", async () => {
     const userData = {
       email: "user@example.com",
       auth: { access_token: "dummyToken" },
@@ -241,11 +258,11 @@ describe("VideoList (Home Page)", () => {
     await waitFor(() => {
       expect(screen.queryByText(/Received video/)).toBeNull();
     });
-    // The video count remains unchanged.
+    // Video count remains unchanged.
     expect(screen.getAllByTestId("video").length).toBe(1);
   });
 
-  it("dismisses toast when Close button is clicked", async () => {
+  test("dismisses toast when Close button is clicked", async () => {
     const userData = {
       email: "user@example.com",
       auth: { access_token: "dummyToken" },
@@ -255,7 +272,6 @@ describe("VideoList (Home Page)", () => {
     mockedAxios.get.mockResolvedValueOnce({
       data: { videos: [], next_cursor: null },
     });
-    // Mock youtube API.
     (fetchYoutubeVideoData as jest.Mock).mockResolvedValueOnce({
       snippet: { title: "Test Title" },
     });
@@ -286,24 +302,21 @@ describe("VideoList (Home Page)", () => {
     });
   });
 
-  it("calls cable.disconnect during cleanup (from channel subscription)", async () => {
+  test("calls cable.disconnect during cleanup (from channel subscription)", async () => {
     const userData = {
       email: "user@example.com",
       auth: { access_token: "dummyToken" },
     };
     localStorage.setItem("userData", JSON.stringify(userData));
-    // Ensure axios.get resolves.
     mockedAxios.get.mockResolvedValueOnce({
       data: { videos: [], next_cursor: null },
     });
-    // Mock youtube API.
     (fetchYoutubeVideoData as jest.Mock).mockResolvedValueOnce({
       snippet: { title: "Test Title" },
     });
 
     render(<VideoList />);
 
-    // Simulate receiving a message that returns a cleanup function.
     let cleanupFn: any;
     act(() => {
       cleanupFn = messageCallback({
@@ -317,8 +330,86 @@ describe("VideoList (Home Page)", () => {
         screen.getByText(/Received video with title: Test Title from Alice/i)
       ).toBeInTheDocument();
     });
-    // Invoke the cleanup function.
     if (cleanupFn) act(() => cleanupFn());
     expect(cableMock.disconnect).toHaveBeenCalled();
+  });
+
+  test("fetches more videos on scroll (infinite scrolling)", async () => {
+    const userData = {
+      email: "user@example.com",
+      auth: { access_token: "dummyToken" },
+    };
+    localStorage.setItem("userData", JSON.stringify(userData));
+
+    // First call returns videos with a positive nextCursor.
+    mockedAxios.get.mockResolvedValueOnce({
+      data: { videos: [{ youtube_id: "vid1" }], next_cursor: 10 },
+    });
+    // Second call returns additional videos and no nextCursor.
+    mockedAxios.get.mockResolvedValueOnce({
+      data: { videos: [{ youtube_id: "vid2" }], next_cursor: null },
+    });
+
+    render(<VideoList />);
+
+    await waitFor(() => {
+      expect(screen.getByText(/vid1/)).toBeInTheDocument();
+    });
+
+    act(() => {
+      Object.defineProperty(window, "innerHeight", {
+        writable: true,
+        value: 1000,
+      });
+      Object.defineProperty(window, "scrollY", { writable: true, value: 900 });
+      Object.defineProperty(document.body, "offsetHeight", {
+        writable: true,
+        value: 1800,
+      });
+      window.dispatchEvent(new Event("scroll"));
+    });
+
+    await waitFor(() => {
+      expect(mockedAxios.get).toHaveBeenCalledTimes(2);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/vid2/)).toBeInTheDocument();
+    });
+  });
+
+  test("shows error fallback if fetchYoutubeVideoData fails from cable message", async () => {
+    // Suppress console error to keep the test output clean.
+    const consoleErrorSpy = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => {});
+    const userData = {
+      email: "user@example.com",
+      auth: { access_token: "dummyToken" },
+    };
+    localStorage.setItem("userData", JSON.stringify(userData));
+    (fetchYoutubeVideoData as jest.Mock).mockRejectedValueOnce({
+      response: { data: { error: "Fetch error" } },
+    });
+
+    render(
+      <ErrorBoundary>
+        <VideoList />
+      </ErrorBoundary>
+    );
+
+    const errorMessagePayload = {
+      youtube_id: "vidError",
+      owner_email: "other@example.com",
+      owner_name: "Error User",
+    };
+    act(() => {
+      messageCallback(errorMessagePayload);
+    });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Error occurred/i)).toBeInTheDocument();
+    });
+    consoleErrorSpy.mockRestore();
   });
 });
