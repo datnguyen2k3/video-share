@@ -11,10 +11,8 @@ module VideoServices
     end
 
     def call
-      if cursor
-        end_id = cursor.to_i
-        return result if end_id < 1
-
+      end_id = cursor.to_i
+      if end_id > 0
         start_id = end_id - limit + 1
         start_id = 1 if start_id < 1
 

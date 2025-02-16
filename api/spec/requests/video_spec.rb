@@ -69,8 +69,8 @@ RSpec.describe "Video API", type: :request do
       end
     end
 
-    context "when cursor is too small" do
-      let(:params) { { cursor: 0 } }
+    context "when cursor is too large" do
+      let(:params) { { cursor: 100000 } }
 
       it "returns 2 videos" do
         get "/video", params: params, headers: headers

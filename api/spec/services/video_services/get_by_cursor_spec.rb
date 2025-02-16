@@ -30,23 +30,13 @@ RSpec.describe VideoServices::GetByCursor, type: :service do
       end
     end
 
-    context 'when there are no videos after the cursor' do
-      it 'returns an empty array and nil next_cursor' do
-        service = described_class.new(0, 2)
-        result = service.call
-
-        expect(result[:videos]).to be_empty
-        expect(result[:next_cursor]).to be_nil
-      end
-    end
-
     context 'when cursor is not number' do
-      it 'returns empty' do
+      it 'returns set of last videos' do
         service = described_class.new("aa", 2)
         result = service.call
 
-        expect(result[:videos]).to be_empty
-        expect(result[:next_cursor]).to be_nil
+        expect(result[:videos].size).to eq(2)
+        expect(result[:next_cursor]).to eq(1)
       end
     end
 
