@@ -81,4 +81,4 @@ services:
       - "3001:3001"
     environment:
       NODE_ENV: production
-      env_file: "./frontend/.env.docker"
+      PORT: 3001

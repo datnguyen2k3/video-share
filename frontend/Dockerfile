@@ -22,7 +22,7 @@ COPY --from=build /app/node_modules ./node_modules
 
 # Set environment variables
 ENV NODE_ENV=production
-EXPOSE 3000
+EXPOSE 3001
 
 # Start Next.js server
 CMD ["npm", "run", "start"]
