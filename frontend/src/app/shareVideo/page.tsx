@@ -8,6 +8,7 @@ import useAuth from "@/app/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { createCable } from "@anycable/web";
 import Toast from "../components/Toast";
+import { fetchYoutubeVideoData } from "../../../utils/youtubeApi";
 
 const YoutubeShareForm: React.FC = () => {
   const [url, setUrl] = useState<string>("");
@@ -64,11 +65,21 @@ const YoutubeShareForm: React.FC = () => {
       if (userData?.email == data.owner_email) {
         return;
       }
-      setToast({
-        show: true,
-        message: `Received message from ${data.owner_email}`,
-        type: "success",
-      });
+      fetchYoutubeVideoData(data.youtube_id)
+        .then((res) => {
+          setToast({
+            show: true,
+            message: `Received video with title: ${res.snippet.title} from ${data.owner_name}`,
+            type: "success",
+          });
+        })
+        .catch((err) => {
+          setToast({
+            show: true,
+            message: err.response.data.error,
+            type: "error",
+          });
+        });
       return () => {
         if (cableRef.current) {
           cableRef.current.disconnect();

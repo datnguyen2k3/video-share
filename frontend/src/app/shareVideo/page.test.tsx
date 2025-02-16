@@ -8,6 +8,7 @@ import {
 } from "@testing-library/react";
 import YoutubeShareForm from "./page";
 import axios from "axios";
+import { fetchYoutubeVideoData } from "../../../utils/youtubeApi";
 
 // --- Mocks ---
 
@@ -32,7 +33,6 @@ jest.mock("next/navigation", () => ({
 jest.mock("@/app/hooks/useAuth", () => () => {});
 
 // Mock Headers component.
-// eslint-disable-next-line react/display-name
 jest.mock("@/app/components/Headers", () => () => <div>Header Component</div>);
 
 // Updated Toast mock that renders a Close button to trigger onClose.
@@ -56,6 +56,11 @@ jest.mock(
         </div>
       ) : null
 );
+
+// Mock fetchYoutubeVideoData.
+jest.mock("../../../utils/youtubeApi", () => ({
+  fetchYoutubeVideoData: jest.fn(),
+}));
 
 // Create a channel mock to capture the cable message callback.
 let messageCallback: (data: any) => any = () => {};
@@ -139,6 +144,11 @@ describe("YoutubeShareForm", () => {
     // Set env var for websocket url.
     process.env.NEXT_PUBLIC_WEBSOCKET_URL = "ws://localhost/";
 
+    // Mock fetchYoutubeVideoData to successfully resolve.
+    (fetchYoutubeVideoData as jest.Mock).mockResolvedValueOnce({
+      snippet: { title: "Test Title" },
+    });
+
     render(<YoutubeShareForm />);
 
     // The cable should be connected and subscribed.
@@ -146,15 +156,19 @@ describe("YoutubeShareForm", () => {
     expect(cableMock.subscribeTo).toHaveBeenCalledWith("NotificationChannel");
 
     // Simulate receiving a cable message from a different user.
-    const messageData = { owner_email: "other@example.com" };
+    const messageData = {
+      youtube_id: "vid123",
+      owner_email: "other@example.com",
+      owner_name: "John Doe",
+    };
     act(() => {
       messageCallback(messageData);
     });
 
-    // Expect a toast message to be displayed.
+    // Expect a toast message to be displayed with the new pattern.
     await waitFor(() => {
       expect(
-        screen.getByText(/Received message from other@example.com/)
+        screen.getByText(/Received video with title: Test Title from John Doe/i)
       ).toBeInTheDocument();
     });
   });
@@ -177,7 +191,7 @@ describe("YoutubeShareForm", () => {
 
     // Expect that no toast message is set.
     await waitFor(() => {
-      expect(screen.queryByText(/Received message/)).toBeNull();
+      expect(screen.queryByText(/Received video with title/)).toBeNull();
     });
   });
 
@@ -196,17 +210,25 @@ describe("YoutubeShareForm", () => {
     };
     localStorage.setItem("userData", JSON.stringify(userData));
     process.env.NEXT_PUBLIC_WEBSOCKET_URL = "ws://localhost/";
+    // Mock fetchYoutubeVideoData to resolve.
+    (fetchYoutubeVideoData as jest.Mock).mockResolvedValueOnce({
+      snippet: { title: "Test Title" },
+    });
     render(<YoutubeShareForm />);
 
     // Simulate receiving a cable message from a different user and capture the cleanup function.
     let cleanup: any;
     act(() => {
-      cleanup = messageCallback({ owner_email: "other2@example.com" });
+      cleanup = messageCallback({
+        youtube_id: "vid456",
+        owner_email: "other2@example.com",
+        owner_name: "Alice",
+      });
     });
     // Ensure the toast is shown.
     await waitFor(() => {
       expect(
-        screen.getByText(/Received message from other2@example.com/)
+        screen.getByText(/Received video with title: Test Title from Alice/i)
       ).toBeInTheDocument();
     });
     // Invoke the cleanup function.
@@ -225,17 +247,25 @@ describe("YoutubeShareForm", () => {
     localStorage.setItem("userData", JSON.stringify(userData));
     process.env.NEXT_PUBLIC_WEBSOCKET_URL = "ws://localhost/";
 
+    // Mock fetchYoutubeVideoData to resolve.
+    (fetchYoutubeVideoData as jest.Mock).mockResolvedValueOnce({
+      snippet: { title: "Test Title" },
+    });
     render(<YoutubeShareForm />);
 
     // Simulate a cable message that displays the toast.
     act(() => {
-      messageCallback({ owner_email: "other@example.com" });
+      messageCallback({
+        youtube_id: "vid789",
+        owner_email: "other@example.com",
+        owner_name: "Jane Doe",
+      });
     });
 
     // Ensure the toast message is shown.
     await waitFor(() => {
       expect(
-        screen.getByText(/Received message from other@example.com/)
+        screen.getByText(/Received video with title: Test Title from Jane Doe/i)
       ).toBeInTheDocument();
     });
 
@@ -245,7 +275,9 @@ describe("YoutubeShareForm", () => {
     // The toast message is dismissed.
     await waitFor(() => {
       expect(
-        screen.queryByText(/Received message from other@example.com/)
+        screen.queryByText(
+          /Received video with title: Test Title from Jane Doe/i
+        )
       ).toBeNull();
     });
   });
