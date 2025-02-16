@@ -1,14 +1,25 @@
 "use client";
 import React, { createContext, useContext, useEffect, useState } from "react";
-import {createCable} from "@anycable/web";
+import { createCable } from "@anycable/web";
 import Toast from "@/app/components/Toast";
+import { UserDataToken } from "../types/modals";
 
 const WebSocketContext = createContext<any>(null);
 
 export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [cable, setCable] = useState<ReturnType<typeof createCable> | null>(null);
+  const [userData, setUserData] = useState<UserDataToken | null>(null);
+  const [message, setMessage] = useState<any>({});
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem("userData") || "null");
+
+    if (!userData) {
+      console.warn("No token found, skipping WebSocket connection");
+      return;
+    }
+    setUserData(userData);
+  }, []);
   const [toast, setToast] = useState({
     show: false,
     message: "",
@@ -16,34 +27,40 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
   });
 
   useEffect(() => {
-    const userData = JSON.parse(localStorage.getItem("userData") || "null");
+    if (!userData) {
+      return;
+    }
     const token = userData?.auth?.access_token;
     const cable = createCable(
-      process.env.NEXT_PUBLIC_WEBSOCKET_URL + `?token=${token}` || "",
+      process.env.NEXT_PUBLIC_WEBSOCKET_URL + `?token=${token}` || ""
     );
-    console.log(process.env.NEXT_PUBLIC_WEBSOCKET_URL + `?token=${token}` || "",)
     cable.connect();
     const channel = cable.subscribeTo("NotificationChannel");
     channel.on("message", (data: any) => {
-      if (userData?.email == data.owner_email){
-        return
+      setMessage(data);
+      if (userData?.email == data.owner_email) {
+        return;
       }
+      console.log({ data });
       setToast({
         show: true,
         message: `Received message from ${data.owner_email}`,
         type: "success",
       });
     });
-    setCable(cable)
-  }, []);
-  return <>
-    <Toast
+  }, [userData]);
+  return (
+    <>
+      <Toast
         show={toast.show}
         message={toast.message}
         type={toast.type}
         onClose={() => setToast({ ...toast, show: false })}
-    />  <WebSocketContext.Provider value={{ cable }}>{children}</WebSocketContext.Provider>;
-  </>
+      />
+      <WebSocketContext.Provider value={{ newMessage: message }}>
+        {children}
+      </WebSocketContext.Provider>
+    </>
+  );
 };
-
 export const useWebSocket = () => useContext(WebSocketContext);
