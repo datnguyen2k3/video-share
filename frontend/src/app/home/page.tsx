@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import Header from "@/app/components/Headers";
 import styles from "@/app/styles/video.module.css";
 import axios from "axios";
@@ -18,34 +18,61 @@ const VideoList: React.FC = () => {
     type: "success" as "success" | "error",
   });
   const [newMessage, setNewMessage] = useState<any>({});
+  const [loading, setLoading] = useState(false);
+  const [nextCursor, setNextCursor] = useState<number | null>(0);
   const cableRef = useRef<any>(null);
   useAuth();
+
+  const fetchVideos = useCallback(async (cursor: number | null) => {
+    if (cursor === null) return;
+    setLoading(true);
+    try {
+      const res = await axios.get(process.env.NEXT_PUBLIC_BE_HOST + "video/", {
+        params: { cursor },
+        headers: {
+          Authorization: getAuthorization(),
+        },
+      });
+      setVideos((prevVideos) => [...prevVideos, ...res.data.videos]);
+      setNextCursor(res.data.next_cursor);
+    } catch (err: any) {
+      let additionalMessage = "";
+      if (err.response && err.response.status === 401) {
+        additionalMessage = "Please log out and log in again.";
+      }
+      setToast({
+        show: true,
+        message: `${
+          err.response?.data?.error || "Error occurred"
+        }. ${additionalMessage}`,
+        type: "error",
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     if (!localStorage.getItem("userData")) {
       return;
     }
-    axios
-      .get(process.env.NEXT_PUBLIC_BE_HOST + "video/" || "", {
-        headers: {
-          Authorization: getAuthorization(),
-        },
-      })
-      .then((res) => {
-        setVideos(res.data.videos);
-      })
-      .catch((err) => {
-        let additionalMessage = "";
-        if (err.response.status == "401") {
-          additionalMessage = "Please log out and log in again.";
-        }
-        setToast({
-          show: true,
-          message: `${err.response.data.error}. ${additionalMessage}`,
-          type: "error",
-        });
-      });
-  }, []);
+    fetchVideos(0);
+  }, [fetchVideos]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 200 &&
+        !loading &&
+        nextCursor !== null
+      ) {
+        fetchVideos(nextCursor);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [fetchVideos, loading, nextCursor]);
 
   useEffect(() => {
     const userDataString = localStorage.getItem("userData");
@@ -64,11 +91,11 @@ const VideoList: React.FC = () => {
     cable.connect();
     const channel = cable.subscribeTo("NotificationChannel");
     channel.on("message", (data: any) => {
-      setNewMessage(data);
       console.log({ userData });
       if (userData?.email === data.owner_email) {
         return;
       }
+      setNewMessage(data);
       console.log({ data });
       setToast({
         show: true,
@@ -88,7 +115,6 @@ const VideoList: React.FC = () => {
       const videoExists = videos.some(
         (video) => video.youtube_id === newMessage.youtube_id
       );
-
       if (!videoExists) {
         setVideos((prevVideos) => [newMessage, ...prevVideos]);
       }
@@ -108,6 +134,7 @@ const VideoList: React.FC = () => {
         {videos.map((video: VideoType) => (
           <Video key={video.youtube_id} videoDetail={video} />
         ))}
+        {loading && <p>Loading...</p>}
       </div>
     </>
   );
