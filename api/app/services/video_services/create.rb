@@ -26,6 +26,14 @@ module VideoServices
       unless url.match?(youtube_regex)
         raise InvalidVideoUrl
       end
+
+      youtube_video_url = "https://www.googleapis.com/youtube/v3/videos?id=#{youtube_id}&key=#{ENV['YOUTUBE_API_KEY']}&part=id"
+      response = HTTParty.get(youtube_video_url)
+      data = JSON.parse(response.body)
+
+      if data["items"].empty?
+        raise InvalidVideoUrl
+      end
     end
 
     def validate_not_found_video
