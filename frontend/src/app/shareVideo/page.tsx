@@ -21,7 +21,7 @@ const YoutubeShareForm: React.FC = () => {
         headers: {
           Authorization: getAuthorization(),
         },
-      },
+      }
     );
     router.push("/");
   };

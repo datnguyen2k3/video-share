@@ -56,6 +56,11 @@ export const WebSocketProvider: React.FC<{ children: React.ReactNode }> = ({
         type: "success",
       });
     });
+    return () => {
+      if (cableRef.current) {
+        cableRef.current.disconnect();
+      }
+    };
   }, [userData]);
   return (
     <>

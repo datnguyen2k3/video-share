@@ -1,0 +1,84 @@
+services:
+  db:
+    image: postgres:17.3
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7.4.2
+    ports:
+      - "6379:6379"
+
+  anycable-go:
+    image: anycable/anycable-go:1.6.0-rc.3
+    depends_on:
+      redis:
+        condition: service_started
+    environment:
+      ANYCABLE_REDIS_URL: "redis://redis:6379"
+      ANYCABLE_RPC_HOST: "anycable:50051"
+      ANYCABLE_DEBUG: "true"
+      ANYCABLE_HOST: 0.0.0.0
+      ANYCABLE_PUBLIC: true
+      ANYCABLE_BROADCAST_ADAPTER: redisx
+    ports:
+      - "8080:8080"
+
+  server:
+    build: ./api
+    entrypoint: ["/app/bin/docker-entrypoint"]
+    command: ["bundle", "exec", "rails", "s", "-p", "3000", "-b", "0.0.0.0"]
+    ports:
+      - "3000:3000"
+    env_file: "./api/.env"
+    environment:
+      POSTGRES_HOST: db
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  worker:
+    build: ./api
+    command: ["bundle", "exec", "sidekiq"]
+    env_file: "./api/.env"
+    environment:
+      POSTGRES_HOST: db
+      REDIS_URL: redis://redis:6379
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+
+  anycable:
+    build: ./api
+    command: ["bundle", "exec", "anycable"]
+    env_file: "./api/.env"
+    environment:
+      POSTGRES_HOST: db
+      REDIS_URL: redis://redis:6379
+      ANYCABLE_REDIS_URL: "redis://redis:6379"
+      ANYCABLE_RPC_HOST: "anycable:50051"
+      ANYCABLE_BROADCAST_ADAPTER: redisx
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+  frontend:
+    build: ./frontend
+    ports:
+      - "3001:3001"
+    environment:
+      NODE_ENV: production
+      PORT: 3001
