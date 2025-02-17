@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   db:
     image: postgres:17.3
@@ -11,7 +13,7 @@ services:
       timeout: 5s
       retries: 5
     volumes:
-      - /mnt/volume1:/db/data
+      - volume1:/db/data
 
   redis:
     image: redis:7.4.2
@@ -33,7 +35,7 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - /mnt/volume2:/anycable-go/data
+      - volume2:/anycable-go/data
 
   server:
     build: .
@@ -51,7 +53,7 @@ services:
       redis:
         condition: service_started
     volumes:
-      - /mnt/volume1:/server/data
+      - volume1:/server/data
 
   worker:
     build: .
@@ -66,7 +68,7 @@ services:
       redis:
         condition: service_started
     volumes:
-      - /mnt/volume2:/worker/data
+      - volume2:/worker/data
 
   anycable:
     build: .
@@ -84,4 +86,18 @@ services:
       redis:
         condition: service_started
     volumes:
-      - /mnt/volume2:/anycable/data
+      - volume2:/anycable/data
+
+volumes:
+  volume1:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume1
+      o: bind
+  volume2:
+    driver: local
+    driver_opts:
+      type: none
+      device: /mnt/volume2
+      o: bind
