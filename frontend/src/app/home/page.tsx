@@ -9,6 +9,7 @@ import { getAuthorization } from "../../../utils/auth";
 import useAuth from "@/app/hooks/useAuth";
 import Toast from "@/app/components/Toast";
 import { createCable } from "@anycable/web";
+import { fetchYoutubeVideoData } from "../../../utils/youtubeApi";
 
 const VideoList: React.FC = () => {
   const [videos, setVideos] = useState<VideoType[]>([]);
@@ -91,16 +92,27 @@ const VideoList: React.FC = () => {
     cable.connect();
     const channel = cable.subscribeTo("NotificationChannel");
     channel.on("message", (data: any) => {
-      console.log({ userData });
+      console.log({ data });
       if (userData?.email === data.owner_email) {
         return;
       }
       setNewMessage(data);
-      setToast({
-        show: true,
-        message: `Received message from ${data.owner_email}`,
-        type: "success",
-      });
+      fetchYoutubeVideoData(data.youtube_id)
+        .then((res) => {
+          setToast({
+            show: true,
+            message: `Received video with title: ${res.snippet.title} from ${data.owner_name}`,
+            type: "success",
+          });
+        })
+        .catch((err) => {
+          setToast({
+            show: true,
+            message: err.response.data.error,
+            type: "error",
+          });
+        });
+
       return () => {
         if (cableRef.current) {
           cableRef.current.disconnect();
