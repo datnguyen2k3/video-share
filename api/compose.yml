@@ -10,6 +10,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    logging:
+      driver: "none"
     volumes:
       - pg_data:/var/lib/postgresql/data
 
@@ -17,6 +19,8 @@ services:
     image: redis:7.4.2
     ports:
       - "6379:6379"
+    logging:
+      driver: "none"
 
   anycable-go:
     image: anycable/anycable-go:1.6.0-rc.3
@@ -32,6 +36,8 @@ services:
       ANYCABLE_BROADCAST_ADAPTER: redisx
     ports:
       - "8080:8080"
+    logging:
+      driver: "none"
 
   server:
     build: .
@@ -48,6 +54,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    logging:
+      driver: "none"
 
   worker:
     build: .
@@ -61,6 +69,8 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    logging:
+      driver: "none"
 
   anycable:
     build: .
@@ -77,3 +87,5 @@ services:
         condition: service_healthy
       redis:
         condition: service_started
+    logging:
+      driver: "none"
