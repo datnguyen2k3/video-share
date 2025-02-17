@@ -33,6 +33,7 @@ jest.mock("next/navigation", () => ({
 jest.mock("@/app/hooks/useAuth", () => () => {});
 
 // Mock Headers component.
+// eslint-disable-next-line react/display-name
 jest.mock("@/app/components/Headers", () => () => <div>Header Component</div>);
 
 // Updated Toast mock that renders a Close button to trigger onClose.
