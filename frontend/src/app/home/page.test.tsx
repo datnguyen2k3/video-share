@@ -91,7 +91,7 @@ class ErrorBoundary extends Component<any, { hasError: boolean }> {
     super(props);
     this.state = { hasError: false };
   }
-  static getDerivedStateFromError(error: any) {
+  static getDerivedStateFromError() {
     return { hasError: true };
   }
   render() {
